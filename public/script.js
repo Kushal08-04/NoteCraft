@@ -87,3 +87,22 @@ window.onload = () => {
   showSection("notes");
   loadNotes();
 };
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('/profile')
+    .then(res => {
+      if (res.status === 401) {
+        document.getElementById('loginBtn').style.display = 'block';
+      } else {
+        document.getElementById('logoutBtn').style.display = 'block';
+      }
+    });
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    window.location.href = '/login';
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    window.location.href = '/logout';
+  });
+});
+
