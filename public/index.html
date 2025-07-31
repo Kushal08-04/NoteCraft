@@ -9,9 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <button class="login-btn" onclick="window.location.href='/login'">Login</button>
+  </header>
+
   <div class="container">
-    <aside class="sidebar">
-      <h2>MY NOTES</h2>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <h2>NOTES CRAFT</h2>
       <nav>
         <button onclick="showSection('add')">📝 Add New</button>
         <button onclick="showSection('calendar')">📅 Calendar</button>
@@ -20,15 +27,14 @@
       </nav>
     </aside>
 
-    <main class="main">
+    <!-- Main Content -->
+    <main class="main-content">
       <header class="header">
-  <input type="text" id="search" placeholder="Search notes..." />
-  <div class="profile-section">
-    <button id="loginBtn">Login</button>
-    <button id="logoutBtn" style="display:none;">Logout</button>
-  </div>
-</header>
-
+        <input type="text" id="search" placeholder="Search notes..." />
+        <div class="profile-section">
+          <button id="logoutBtn" style="display:none;">Logout</button>
+        </div>
+      </header>
 
       <section id="add" class="section">
         <h3>Add New Note</h3>
@@ -51,6 +57,21 @@
       </section>
     </main>
   </div>
+
   <script src="script.js"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    function showSection(sectionId) {
+      const sections = ['add', 'calendar', 'archive', 'trash'];
+      sections.forEach(id => {
+        const el = document.getElementById(id + '-section') || document.getElementById(id);
+        if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>

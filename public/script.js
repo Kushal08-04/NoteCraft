@@ -105,4 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = '/logout';
   });
 });
+document.getElementById('menuToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('hidden');
+});
+
 
