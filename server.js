@@ -60,12 +60,48 @@ app.use((req, res, next) => {
 
 // Notes storage path
 const NOTES_FILE = path.join(__dirname, 'notes.json');
+const REMINDERS_FILE = path.join(__dirname, 'reminders.json');
 
 // Read notes
 app.get('/api/notes', (req, res) => {
   if (!fs.existsSync(NOTES_FILE)) return res.json([]);
   const data = fs.readFileSync(NOTES_FILE);
   res.json(JSON.parse(data));
+});
+
+// Get reminders
+app.get('/api/reminders', (req, res) => {
+  if (!fs.existsSync(REMINDERS_FILE)) return res.json([]);
+  const data = fs.readFileSync(REMINDERS_FILE);
+  res.json(JSON.parse(data));
+});
+
+// Add reminder
+app.post('/api/reminders', (req, res) => {
+  const newReminder = {
+    id: uuidv4(),
+    user: req.user.email, // User-specific reminders
+    ...req.body
+  };
+
+  let reminders = [];
+  if (fs.existsSync(REMINDERS_FILE)) {
+    reminders = JSON.parse(fs.readFileSync(REMINDERS_FILE));
+  }
+
+  reminders.push(newReminder);
+  fs.writeFileSync(REMINDERS_FILE, JSON.stringify(reminders));
+  res.status(201).json(newReminder);
+});
+
+// Delete reminder
+app.delete('/api/reminders/:id', (req, res) => {
+  if (!fs.existsSync(REMINDERS_FILE)) return res.status(404).json({ error: 'Reminder file not found' });
+
+  let reminders = JSON.parse(fs.readFileSync(REMINDERS_FILE));
+  reminders = reminders.filter(r => r.id !== req.params.id);
+  fs.writeFileSync(REMINDERS_FILE, JSON.stringify(reminders));
+  res.status(200).json({ message: 'Reminder deleted' });
 });
 
 // Save note

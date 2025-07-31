@@ -3,41 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MY NOTES</title>
+  <title>NOTE CRAFT</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
 </head>
 <body>
-  <!-- Topbar -->
-  <header class="topbar">
-    <button class="hamburger" onclick="toggleSidebar()">☰</button>
-    <button class="login-btn" onclick="window.location.href='/login'">Login</button>
-  </header>
-
   <div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <h2>NOTES CRAFT</h2>
-      <nav>
-        <button onclick="showSection('add')">📝 Add New</button>
-        <button onclick="showSection('calendar')">📅 Calendar</button>
-        <button onclick="showSection('archive')">📦 Archive</button>
-        <button onclick="showSection('trash')">🗑️ Trash</button>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <header class="header">
+    <header class="l-header">
+      <div class="left-header">
+        <img src="https://i.ibb.co/zWL8Yc1x/icon.png" alt="Logo" class="app-logo">
+        <h1 class="app-title">NOTE CRAFT</h1>
+      </div>
+      <div class="right-header">
+        <h2>MY NOTES</h2>
         <input type="text" id="search" placeholder="Search notes..." />
         <div class="profile-section">
+          <label for="profileUpload">
+            <img id="profilePic" src="https://i.ibb.co/RkWxTFQn/default.png" alt="Profile Icon" />
+          </label>
+          <input type="file" id="profileUpload" accept="image/*" hidden />
+          <span id="userName"></span>
+          <button id="loginBtn">Login</button>
           <button id="logoutBtn" style="display:none;">Logout</button>
         </div>
-      </header>
+      </div>
+    </header>
 
+    <aside class="sidebar">
+      <button onclick="showSection('add')">
+        <img src="https://i.ibb.co/jZVznt3V/add.png" class="icon" /> Add New
+      </button>
+      <div class="status-circles">
+        <span class="circle green"></span>
+        <span class="circle blue"></span>
+        <span class="circle red"></span>
+      </div>
+      <button onclick="showSection('calendar')">
+        <img src="https://i.ibb.co/FbTZ4yjc/calendar.png" class="icon" /> Calendar
+      </button>
+      <button onclick="showSection('archive')">
+        <img src="https://i.ibb.co/mCM3H0r3/archive.png" class="icon" /> Archive
+      </button>
+      <button onclick="showSection('trash')">
+        <img src="https://i.ibb.co/XxGXBBCm/trash.png" class="icon" /> Trash
+      </button>
+    </aside>
+
+    <main class="main">
       <section id="add" class="section">
-        <h3>Add New Note</h3>
+        <h3>Add New</h3>
         <form id="noteForm">
           <input type="text" id="title" placeholder="Title" required />
           <input type="text" id="folder" placeholder="Folder (e.g., Class Notes)" />
@@ -47,31 +61,47 @@
       </section>
 
       <section id="folders" class="section">
-        <h3>Recent Folders</h3>
-        <div id="recentFolders" class="card-container"></div>
+        <h3>My Folders</h3>
+        <div id="folderContainer" class="card-container">
+          <!-- Folders will be rendered here -->
+        </div>
       </section>
 
       <section id="notes" class="section">
         <h3>My Notes</h3>
-        <div id="notesContainer" class="card-container"></div>
+        <div id="notesContainer" class="card-container">
+          <!-- Notes will be rendered here -->
+        </div>
+      </section>
+
+      <section id="calendar" class="section" style="display:none;">
+        <h3>Calendar</h3>
+        <div id="calendarSection" class="calendar">
+          <div class="calendar-header">
+            <button id="prevMonth">⬅️</button>
+            <span id="monthYear"></span>
+            <button id="nextMonth">➡️</button>
+          </div>
+          <table class="calendar-table">
+            <tbody id="calendarBody"></tbody>
+          </table>
+          <ul id="reminderList"></ul>
+        </div>
+      </section>
+
+
+      <section id="archive" class="section" style="display:none;">
+        <h3>Archived Items</h3>
+        <div id="archiveContainer" class="card-container"></div>
+      </section>
+
+      <section id="trash" class="section" style="display:none;">
+        <h3>Trash</h3>
+        <div id="trashContainer" class="card-container"></div>
       </section>
     </main>
   </div>
 
   <script src="script.js"></script>
-  <script>
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('active');
-    }
-
-    function showSection(sectionId) {
-      const sections = ['add', 'calendar', 'archive', 'trash'];
-      sections.forEach(id => {
-        const el = document.getElementById(id + '-section') || document.getElementById(id);
-        if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
-      });
-    }
-  </script>
 </body>
 </html>
