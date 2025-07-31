@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MY NOTES</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>MY NOTES</h2>
+      <nav>
+        <button onclick="showSection('add')">📝 Add New</button>
+        <button onclick="showSection('calendar')">📅 Calendar</button>
+        <button onclick="showSection('archive')">📦 Archive</button>
+        <button onclick="showSection('trash')">🗑️ Trash</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header>
+        <input type="text" id="search" placeholder="Search notes..." />
+        <div class="profile">👤</div>
+      </header>
+
+      <section id="add" class="section">
+        <h3>Add New Note</h3>
+        <form id="noteForm">
+          <input type="text" id="title" placeholder="Title" required />
+          <input type="text" id="folder" placeholder="Folder (e.g., Class Notes)" />
+          <textarea id="content" placeholder="Write your note..." required></textarea>
+          <button type="submit">Save</button>
+        </form>
+      </section>
+
+      <section id="folders" class="section">
+        <h3>Recent Folders</h3>
+        <div id="recentFolders" class="card-container"></div>
+      </section>
+
+      <section id="notes" class="section">
+        <h3>My Notes</h3>
+        <div id="notesContainer" class="card-container"></div>
+      </section>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
