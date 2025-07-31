@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
-const { Strategy } = require('passport-ibm-appid');
+const { WebAppStrategy } = require('ibmcloud-appid');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 
@@ -18,12 +19,14 @@ app.use(session({
 }));
 
 // Passport setup
-passport.use(new Strategy({
-  clientId: 'YOUR_CLIENT_ID',
-  discoveryEndpoint: 'YOUR_DISCOVERY_ENDPOINT',
-  secret: 'YOUR_CLIENT_SECRET',
-  redirectUri: 'http://localhost:3000/callback'
+passport.use(new WebAppStrategy({
+  clientId: process.env.CLIENT_ID,
+  secret: process.env.CLIENT_SECRET,
+  tenantId: process.env.TENANT_ID,
+  oauthServerUrl: process.env.OAUTH_SERVER_URL,
+  redirectUri: process.env.REDIRECT_URI
 }));
+
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -36,8 +39,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Authentication routes
-app.get('/login', passport.authenticate('appid'));
-app.get('/callback', passport.authenticate('appid', {
+app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
+app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
   failureRedirect: '/login',
   successRedirect: '/'
 }));
@@ -78,5 +81,7 @@ app.post('/api/notes', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+console.log(`✅ Server running at http://localhost:${PORT}`);
+console.log(`🔐 IBM App ID Redirect URI: ${process.env.REDIRECT_URI}`);
+
 });
