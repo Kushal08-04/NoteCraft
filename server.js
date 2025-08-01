@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -18,9 +19,9 @@ app.use(passport.initialize());
 // === IBM App ID Auth ===
 const WebAppStrategy = appID.WebAppStrategy;
 passport.use(new WebAppStrategy({
-  tenantId: process.env.TENANT_ID,
   clientId: process.env.CLIENT_ID,
   secret: process.env.CLIENT_SECRET,
+  tenantId: process.env.TENANT_ID,
   oauthServerUrl: process.env.OAUTH_SERVER_URL,
   redirectUri: process.env.REDIRECT_URI
 }));
