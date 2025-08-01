@@ -1,97 +1,92 @@
-body {
+/* Reset and Layout */
+body, html {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f6f7f9;
-}
-
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f5f7;
 }
 
 header {
-  background-color: #dbeafe;
+  background: #dbeafe;
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  padding: 10px 20px;
   align-items: center;
-  border-bottom: 1px solid #ccc;
 }
 
-.logo {
-  font-weight: bold;
+.header-left {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
-header input {
+.header-left img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#searchInput {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-#account-icon {
-  margin-left: 10px;
+.account-icon {
   cursor: pointer;
 }
 
-#account-menu {
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  background: #fff;
-  border: 1px solid #ccc;
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
-}
-
-#account-menu button {
-  padding: 5px 10px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-#account-menu.hidden {
+.account-menu {
   display: none;
-}
-
-aside {
-  width: 200px;
-  background-color: #e0f2fe;
+  position: absolute;
+  right: 20px;
+  top: 60px;
+  background: white;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
   padding: 10px;
-  flex-shrink: 0;
-}
-
-.nav-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: #e0f2fe;
-  cursor: pointer;
-  text-align: left;
-  margin-bottom: 5px;
   border-radius: 5px;
 }
 
-.nav-btn.active {
-  background-color: #bae6fd;
+.account-menu button {
+  display: block;
+  margin: 5px 0;
+  width: 100%;
 }
 
-.status-dots {
+/* Sidebar */
+aside {
+  background: #e0f2fe;
+  width: 200px;
+  padding: 10px;
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+}
+
+aside ul {
+  list-style: none;
+  padding: 0;
+}
+
+aside ul li {
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.status-circles {
   display: flex;
-  justify-content: start;
   gap: 5px;
   margin: 10px 0;
 }
 
-.dot {
-  height: 10px;
+.status-circles span {
   width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -100,77 +95,98 @@ aside {
 .blue { background: lightblue; }
 .red { background: lightcoral; }
 
+/* Main Content */
 main {
-  flex-grow: 1;
+  margin-left: 220px;
   padding: 20px;
-  overflow-y: auto;
 }
 
-#folders-container, #notes-container, #archive-container, #trash-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
+/* Cards */
 .folder-card, .note-card {
-  background-color: #fff;
-  padding: 10px;
+  background: #fff;
   border-radius: 10px;
-  box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+  padding: 15px;
+  margin: 10px;
+  display: inline-block;
   width: 200px;
   position: relative;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-.folder-card .dots, .note-card .dots {
+.card-menu {
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 10px;
   cursor: pointer;
 }
 
-.menu {
-  position: absolute;
-  top: 25px;
-  right: 10px;
-  background: #fff;
-  border: 1px solid #ccc;
+.menu-options {
   display: none;
-  flex-direction: column;
-  z-index: 5;
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 100;
 }
 
-.menu button {
-  border: none;
-  background: none;
+.menu-options div {
   padding: 5px 10px;
   cursor: pointer;
 }
 
-#calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-}
-
-.calendar-day {
-  background: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
-  cursor: pointer;
-  border: 1px solid #ddd;
-}
-
+/* Calendar */
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-#reminder-box {
-  margin-top: 20px;
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
 }
 
-.hidden {
+.calendar-day, .calendar-cell {
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.calendar-day {
+  font-weight: bold;
+  background: #e2e8f0;
+}
+
+.calendar-cell {
+  background: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.reminder-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: red;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+/* Modal */
+.modal {
   display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
 }
