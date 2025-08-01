@@ -7,46 +7,45 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="app-title">📝 NOTE CRAFT</div>
-      <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Search notes..." />
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">📝 NOTE CRAFT</div>
+      <button id="addNewBtn">➕ Add New</button>
+      <div class="status-dots">
+        <span class="dot green"></span>
+        <span class="dot blue"></span>
+        <span class="dot red"></span>
       </div>
-      <div class="user-menu">
-        <img src="profile.png" id="profileIcon" alt="User" />
-        <div class="auth-popup" id="authPopup">
-          <button id="loginBtn">Login</button>
-          <button id="logoutBtn" style="display: none;">Logout</button>
-        </div>
-      </div>
-    </header>
-
-    <aside>
-      <ul>
-        <li onclick="showAddNoteSection()">➕ Add New</li>
-        <li><span class="dot green"></span></li>
-        <li><span class="dot blue"></span></li>
-        <li><span class="dot red"></span></li>
-        <li onclick="showCalendar()">📅 Calendar</li>
-        <li onclick="showArchive()">📦 Archive</li>
-        <li onclick="showTrash()">🗑️ Trash</li>
-      </ul>
+      <button class="nav-btn" onclick="showCalendar()">📅 Calendar</button>
+      <button class="nav-btn" onclick="showArchive()">📦 Archive</button>
+      <button class="nav-btn" onclick="showTrash()">🗑️ Trash</button>
     </aside>
 
-    <main>
-      <section class="add-note-section" id="addNoteSection">
+    <main class="main-content">
+      <header>
+        <h2>MY NOTES</h2>
+        <input type="text" id="searchBar" placeholder="Search notes..."/>
+        <div class="account-icon" onclick="toggleAccountMenu()">👤</div>
+        <div id="accountMenu" class="account-menu hidden">
+          <button id="loginBtn">Login</button>
+          <button id="logoutBtn" class="hidden">Logout</button>
+        </div>
+      </header>
+
+      <section id="addNoteSection" class="note-form hidden">
         <input type="text" id="noteTitle" placeholder="Title" />
         <input type="text" id="noteFolder" placeholder="Folder (e.g., Class Notes)" />
         <textarea id="noteContent" placeholder="Write your note..."></textarea>
         <button onclick="saveNote()">Save</button>
       </section>
 
-      <h2>Recent Folders</h2>
-      <div id="foldersContainer" class="grid"></div>
+      <section id="contentArea">
+        <h3>Recent Folders</h3>
+        <div id="folderContainer" class="card-container"></div>
 
-      <h2>My Notes</h2>
-      <div id="notesContainer" class="grid"></div>
+        <h3>My Notes</h3>
+        <div id="noteContainer" class="card-container"></div>
+      </section>
     </main>
   </div>
 

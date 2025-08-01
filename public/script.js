@@ -1,109 +1,167 @@
-document.addEventListener('DOMContentLoaded', () => {
-  loadNotes();
-  document.getElementById('profileIcon').addEventListener('click', toggleAuthPopup);
-  document.getElementById('loginBtn').addEventListener('click', loginUser);
-  document.getElementById('logoutBtn').addEventListener('click', logoutUser);
-  document.getElementById('searchBar').addEventListener('input', filterNotes);
-});
+const addNewBtn = document.getElementById('addNewBtn');
+const addNoteSection = document.getElementById('addNoteSection');
+const noteContainer = document.getElementById('noteContainer');
+const folderContainer = document.getElementById('folderContainer');
+const searchBar = document.getElementById('searchBar');
+const accountMenu = document.getElementById('accountMenu');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
 
-function toggleAuthPopup() {
-  const popup = document.getElementById('authPopup');
-  popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
-}
+let notes = JSON.parse(localStorage.getItem('notes')) || [];
+let currentView = 'home';
 
-function loginUser() {
-  // Simulated login
-  alert('Logged in');
-  document.getElementById('loginBtn').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'block';
-}
-
-function logoutUser() {
-  alert('Logged out');
-  document.getElementById('loginBtn').style.display = 'block';
-  document.getElementById('logoutBtn').style.display = 'none';
-}
-
-function showAddNoteSection() {
-  document.getElementById('addNoteSection').style.display = 'block';
-}
+addNewBtn.onclick = () => {
+  addNoteSection.classList.toggle('hidden');
+};
 
 function saveNote() {
   const title = document.getElementById('noteTitle').value;
   const folder = document.getElementById('noteFolder').value;
   const content = document.getElementById('noteContent').value;
 
-  if (!title || !content || !folder) return alert("All fields required!");
+  if (!title || !content) return alert("Fill in title and note");
 
   const note = {
     id: Date.now(),
     title,
     folder,
     content,
-    date: new Date().toLocaleDateString()
+    date: new Date().toLocaleString(),
+    archived: false,
+    trashed: false
   };
 
-  const notes = JSON.parse(localStorage.getItem('notes')) || [];
   notes.push(note);
   localStorage.setItem('notes', JSON.stringify(notes));
-  loadNotes();
+  renderNotes();
+  addNoteSection.classList.add('hidden');
 }
 
-function loadNotes() {
-  const notes = JSON.parse(localStorage.getItem('notes')) || [];
-  const foldersContainer = document.getElementById('foldersContainer');
-  const notesContainer = document.getElementById('notesContainer');
-  foldersContainer.innerHTML = '';
-  notesContainer.innerHTML = '';
+function renderNotes() {
+  noteContainer.innerHTML = '';
+  folderContainer.innerHTML = '';
 
-  const folders = [...new Set(notes.map(n => n.folder))];
+  const filteredNotes = notes.filter(n => !n.archived && !n.trashed);
+  const folders = [...new Set(filteredNotes.map(n => n.folder))];
+
   folders.forEach(folder => {
-    foldersContainer.innerHTML += `
-      <div class="folder-card" style="background: ${randomPastelColor()}">
-        <p>${folder}</p>
-        <div class="actions" onclick="alert('Folder actions coming soon!')">⋮</div>
-      </div>`;
+    const card = document.createElement('div');
+    card.className = 'folder-card';
+    card.style.backgroundColor = getRandomColor();
+    card.textContent = folder || 'Untitled Folder';
+    folderContainer.appendChild(card);
   });
 
-  notes.forEach(note => {
-    notesContainer.innerHTML += `
-      <div class="note-card" style="background: ${randomPastelColor()}">
-        <strong>${note.title}</strong>
-        <p>${note.content}</p>
-        <small>${note.date}</small>
-        <div class="actions" onclick="deleteNote(${note.id})">🗑️</div>
-      </div>`;
-  });
-}
-
-function deleteNote(id) {
-  let notes = JSON.parse(localStorage.getItem('notes')) || [];
-  notes = notes.filter(note => note.id !== id);
-  localStorage.setItem('notes', JSON.stringify(notes));
-  loadNotes();
-}
-
-function filterNotes(e) {
-  const query = e.target.value.toLowerCase();
-  const allNotes = document.querySelectorAll('.note-card');
-  allNotes.forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(query) ? 'block' : 'none';
+  filteredNotes.forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.style.backgroundColor = getRandomColor();
+    card.innerHTML = `
+      <div class="actions">
+        <button onclick="archiveNote(${note.id})">📦</button>
+        <button onclick="trashNote(${note.id})">🗑️</button>
+      </div>
+      <h4>${note.title}</h4>
+      <p>${note.content}</p>
+      <small>${note.date}</small>
+    `;
+    noteContainer.appendChild(card);
   });
 }
 
-function randomPastelColor() {
-  const pastel = ['#d9eaff', #ffe7cc, #fce2e2, #ccffd9, #e2ccff'];
-  return pastel[Math.floor(Math.random() * pastel.length)];
+function getRandomColor() {
+  const colors = ['#dbeafe', '#fee2e2', '#fef9c3', '#e0f2fe', '#ede9fe', '#dcfce7'];
+  return colors[Math.floor(Math.random() * colors.length)];
 }
 
-function showCalendar() {
-  alert('Calendar page works. Functionality already implemented.');
+function archiveNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (note) {
+    note.archived = true;
+    localStorage.setItem('notes', JSON.stringify(notes));
+    renderNotes();
+  }
+}
+
+function trashNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (note) {
+    note.trashed = true;
+    localStorage.setItem('notes', JSON.stringify(notes));
+    renderNotes();
+  }
 }
 
 function showArchive() {
-  alert('Archive feature coming soon!');
+  currentView = 'archive';
+  renderFiltered(n => n.archived);
 }
 
 function showTrash() {
-  alert('Trash feature coming soon!');
+  currentView = 'trash';
+  renderFiltered(n => n.trashed);
 }
+
+function showCalendar() {
+  currentView = 'calendar';
+  noteContainer.innerHTML = '<p class="default-message">📅 Calendar View (Coming Soon)</p>';
+  folderContainer.innerHTML = '';
+}
+
+function renderFiltered(filterFn) {
+  noteContainer.innerHTML = '';
+  folderContainer.innerHTML = '';
+  const filtered = notes.filter(filterFn);
+  if (filtered.length === 0) {
+    noteContainer.innerHTML = `<p class="default-message">Nothing in ${currentView.charAt(0).toUpperCase() + currentView.slice(1)}</p>`;
+  } else {
+    filtered.forEach(note => {
+      const card = document.createElement('div');
+      card.className = 'note-card';
+      card.style.backgroundColor = getRandomColor();
+      card.innerHTML = `
+        <h4>${note.title}</h4>
+        <p>${note.content}</p>
+        <small>${note.date}</small>
+      `;
+      noteContainer.appendChild(card);
+    });
+  }
+}
+
+function toggleAccountMenu() {
+  accountMenu.classList.toggle('hidden');
+}
+
+loginBtn.onclick = () => {
+  loginBtn.classList.add('hidden');
+  logoutBtn.classList.remove('hidden');
+};
+
+logoutBtn.onclick = () => {
+  logoutBtn.classList.add('hidden');
+  loginBtn.classList.remove('hidden');
+};
+
+searchBar.addEventListener('input', () => {
+  const query = searchBar.value.toLowerCase();
+  const filtered = notes.filter(n => 
+    !n.archived && !n.trashed && 
+    (n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query))
+  );
+  noteContainer.innerHTML = '';
+  folderContainer.innerHTML = '';
+  filtered.forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.style.backgroundColor = getRandomColor();
+    card.innerHTML = `
+      <h4>${note.title}</h4>
+      <p>${note.content}</p>
+      <small>${note.date}</small>
+    `;
+    noteContainer.appendChild(card);
+  });
+});
+
+renderNotes();
