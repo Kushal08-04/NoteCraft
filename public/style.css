@@ -1,138 +1,190 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: #f6f7fb;
+  background: #f7f8fc;
 }
 
-.app {
+.container {
   display: flex;
+  height: 100vh;
 }
 
 .sidebar {
   width: 220px;
-  background: #fff;
-  border-right: 1px solid #ddd;
+  background: white;
   padding: 20px;
+  border-right: 1px solid #e2e2e2;
 }
 
 .logo {
+  font-weight: bold;
   font-size: 18px;
   margin-bottom: 20px;
 }
 
-.sidebar ul {
+.nav {
   list-style: none;
   padding: 0;
 }
 
-.sidebar li {
-  margin: 12px 0;
+.nav-item {
+  margin: 10px 0;
   cursor: pointer;
 }
 
-.status-dots {
+.status-indicators {
   display: flex;
+  margin: 10px 0;
   gap: 5px;
 }
 
-.dot {
+.status {
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
 
-.dot.green { background-color: lightgreen; }
-.dot.blue { background-color: lightblue; }
-.dot.red { background-color: lightcoral; }
+.green { background: lightgreen; }
+.blue { background: lightblue; }
+.red { background: lightcoral; }
 
-.main {
+.main-content {
   flex: 1;
   padding: 20px;
+  overflow-y: auto;
   position: relative;
 }
 
-.top-bar {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.search-container input {
-  padding: 6px 10px;
+#searchInput {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+}
+
+.account-wrapper {
+  position: relative;
+}
+
+.account-icon {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.account-menu {
+  position: absolute;
+  right: 0;
+  top: 35px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.account-menu button {
+  border: none;
+  background: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.account-menu.hidden {
+  display: none;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.card .menu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.card .menu-options {
+  display: none;
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 3;
+  border-radius: 5px;
+}
+
+.card .menu-options button {
+  padding: 5px 10px;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card .menu.show + .menu-options {
+  display: block;
+}
+
+textarea, input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-.account-container {
-  position: relative;
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: #005fff;
+  color: white;
+  border: none;
   cursor: pointer;
 }
 
-.account-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.account-menu {
+.hidden {
   display: none;
-  position: absolute;
-  top: 40px;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 10px;
-  z-index: 100;
 }
 
-.account-menu button {
-  display: block;
-  margin: 5px 0;
-  width: 100%;
-}
-
-.add-new-form {
-  display: none;
-  margin: 20px 0;
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.add-new-form input,
-.add-new-form textarea {
-  width: 100%;
-  margin: 10px 0;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.folder-container, .note-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.note-card, .folder-card {
-  background: #fff;
-  padding: 10px;
-  border-radius: 10px;
-  width: 200px;
-  min-height: 120px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.note-card .actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.empty-message {
+.empty-msg {
+  margin-top: 30px;
   color: #888;
   font-style: italic;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#calendar div {
+  background: white;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
 }

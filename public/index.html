@@ -7,65 +7,65 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
+  <div class="container">
     <aside class="sidebar">
-      <h2 class="logo">📝 NOTE CRAFT</h2>
-      <ul>
-        <li onclick="showSection('dashboard')">🏠 Dashboard</li>
-        <li onclick="toggleAddNew()">➕ Add New</li>
-        <li><div class="status-dots">
-          <span class="dot green"></span>
-          <span class="dot blue"></span>
-          <span class="dot red"></span>
-        </div></li>
-        <li onclick="showSection('calendar')">📅 Calendar</li>
-        <li onclick="showSection('archive')">🗄️ Archive</li>
-        <li onclick="showSection('trash')">🗑️ Trash</li>
+      <div class="logo">📝 NOTE CRAFT</div>
+      <ul class="nav">
+        <li class="nav-item" data-section="dashboard">🏠 Dashboard</li>
+        <li class="nav-item" data-section="add">➕ Add New</li>
+        <div class="status-indicators">
+          <span class="status green"></span>
+          <span class="status blue"></span>
+          <span class="status red"></span>
+        </div>
+        <li class="nav-item" data-section="calendar">📅 Calendar</li>
+        <li class="nav-item" data-section="archive">📦 Archive</li>
+        <li class="nav-item" data-section="trash">🗑️ Trash</li>
       </ul>
     </aside>
 
-    <main class="main">
-      <header class="top-bar">
-        <div class="search-container">
-          <input type="text" placeholder="Search..." id="searchBar" oninput="searchNotes()"/>
-        </div>
-        <div class="account-container" onclick="toggleAccountMenu(event)">
-          <img src="profile.png" alt="Account" class="account-icon" />
-          <div class="account-menu" id="accountMenu">
-            <button onclick="login()">Login</button>
-            <button onclick="logout()">Logout</button>
+    <main class="main-content">
+      <header class="header">
+        <input type="text" id="searchInput" placeholder="Search..." />
+        <div class="account-wrapper">
+          <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="account-icon" />
+          <div class="account-menu hidden">
+            <button id="loginBtn">Login</button>
+            <button id="logoutBtn">Logout</button>
           </div>
         </div>
       </header>
 
-      <div class="add-new-form" id="addNewForm">
+      <section id="dashboardView">
+        <h2>My Folders</h2>
+        <div id="folders" class="card-container"></div>
+        <h2>My Notes</h2>
+        <div id="notes" class="card-container"></div>
+      </section>
+
+      <section id="addNewView" class="hidden">
+        <h2>Add New Note</h2>
         <input type="text" id="noteTitle" placeholder="Title" />
-        <input type="text" id="noteFolder" placeholder="Folder (e.g. Class Notes)" />
+        <input type="text" id="noteFolder" placeholder="Folder" />
         <textarea id="noteContent" placeholder="Write your note..."></textarea>
         <button onclick="saveNote()">Save</button>
-      </div>
-
-      <section id="dashboardView">
-        <h2>Recent Folders</h2>
-        <div id="recentFolders" class="folder-container"></div>
-
-        <h2>My Notes</h2>
-        <div id="myNotes" class="note-container"></div>
       </section>
 
-      <section id="calendarView" style="display: none;">
+      <section id="calendarView" class="hidden">
         <h2>Calendar</h2>
-        <div id="calendarContainer"></div>
+        <div id="calendar"></div>
       </section>
 
-      <section id="archiveView" style="display: none;">
-        <h2>Archived Notes</h2>
-        <div id="archivedNotes" class="note-container"></div>
+      <section id="archiveView" class="hidden">
+        <h2>Archive</h2>
+        <div id="archiveNotes" class="card-container"></div>
+        <div id="emptyArchive" class="empty-msg hidden">Nothing in Archive</div>
       </section>
 
-      <section id="trashView" style="display: none;">
+      <section id="trashView" class="hidden">
         <h2>Trash</h2>
-        <div id="trashedNotes" class="note-container"></div>
+        <div id="trashNotes" class="card-container"></div>
+        <div id="emptyTrash" class="empty-msg hidden">Nothing in Trash</div>
       </section>
     </main>
   </div>
