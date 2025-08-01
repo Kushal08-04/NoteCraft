@@ -178,18 +178,18 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Sidebar Button Navigation
   document.getElementById('allNotesBtn').addEventListener('click', () => {
     renderNotes('active');
-    document.getElementById('calendar-grid').style.display = 'none';
+    document.getElementById('calendarSection').classList.add('hidden');
     document.getElementById('notes-container').style.display = 'flex';
   });
 
   document.getElementById('archiveBtn').addEventListener('click', () => {
     renderNotes('archived');
-    document.getElementById('calendar-grid').style.display = 'none';
+    document.getElementById('calendarSection').classList.add('hidden');
     document.getElementById('notes-container').style.display = 'flex';
   });
 
   document.getElementById('trashBtn').addEventListener('click', () => {
     renderNotes('deleted');
-    document.getElementById('calendar-grid').style.display = 'none';
+    document.getElementById('calendarSection').classList.add('hidden');
   });
 });
