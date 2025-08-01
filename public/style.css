@@ -20,7 +20,7 @@ header {
 }
 .sidebar {
   grid-area: sidebar; background: #e3eaf1; padding: 1rem;
-  display: flex; flex-direction: column; gap: 0.5rem;
+  padding-top: 2rem; display: flex; flex-direction: column; gap: 0.5rem;
 }
 .nav-btn {
   background: white; border: 1px solid #ccc; padding: 0.6rem;
@@ -39,13 +39,23 @@ main {
 #noteForm button { background: #2f80ed; color: white; border: none; cursor: pointer; }
 
 #notes-container {
-  display: flex; flex-wrap: wrap; gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
 }
+
 .card {
   background: white; padding: 1rem; border-radius: 6px;
   border: 1px solid #ccc; width: 250px; position: relative;
 }
-.card-title { font-weight: bold; margin-bottom: 0.5rem; }
+.card-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
 .card-menu { position: absolute; top: 8px; right: 8px; cursor: pointer; }
 
 .hidden { display: none; }
@@ -58,6 +68,11 @@ main {
   background: #f0f0f0; padding: 1rem; border-radius: 4px;
   text-align: center; position: relative;
 }
+.calendar-day:hover {
+  background: #dbeafe;
+  cursor: pointer;
+}
+
 .reminder-dot {
   width: 8px; height: 8px; background: #f87171; border-radius: 50%;
   position: absolute; bottom: 5px; right: 5px;
@@ -73,3 +88,24 @@ main {
   padding: 6px 10px; background: none; border: none; cursor: pointer; text-align: left;
 }
 .context-menu button:hover { background: #eee; }
+/* Active sidebar button */
+.nav-btn.active {
+  background-color: #2f80ed;
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+.card textarea {
+  font-size: 0.95rem;
+  width: 100%;
+  border: none;
+  outline: none;
+}
+#reminderList {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+

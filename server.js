@@ -36,7 +36,8 @@ app.get('/api/notes', authenticate, (req, res) => {
   }
   const allNotes = JSON.parse(fs.readFileSync(notesPath));
   const userNotes = allNotes[userEmail] || [];
-  res.json(userNotes);
+  const nonReminderNotes = userNotes.filter(note => !note.date); // exclude notes with a "date"
+  res.json(nonReminderNotes);
 });
 
 app.post('/api/notes', authenticate, (req, res) => {
@@ -57,6 +58,43 @@ app.post('/api/notes', authenticate, (req, res) => {
   fs.writeFileSync(notesPath, JSON.stringify(allNotes, null, 2));
   res.status(201).json({ message: 'Note saved successfully' });
 });
+
+// ========== Update Note (Archive, Delete, Restore, etc.) ==========
+app.put('/api/notes/:id', authenticate, (req, res) => {
+  const userEmail = req.user.email;
+  const noteId = req.params.id;
+  const updatedFields = req.body;
+
+  const notesPath = path.join(__dirname, 'notes.json');
+  let allNotes = JSON.parse(fs.readFileSync(notesPath));
+  let userNotes = allNotes[userEmail] || [];
+
+  let index = userNotes.findIndex(note => note.id === noteId);
+  if (index === -1) return res.status(404).json({ message: 'Note not found' });
+
+  userNotes[index] = { ...userNotes[index], ...updatedFields };
+  allNotes[userEmail] = userNotes;
+  fs.writeFileSync(notesPath, JSON.stringify(allNotes, null, 2));
+
+  res.json({ message: 'Note updated successfully' });
+});
+
+// ========== Permanently Delete Note ==========
+app.delete('/api/notes/:id', authenticate, (req, res) => {
+  const userEmail = req.user.email;
+  const noteId = req.params.id;
+
+  const notesPath = path.join(__dirname, 'notes.json');
+  let allNotes = JSON.parse(fs.readFileSync(notesPath));
+  let userNotes = allNotes[userEmail] || [];
+
+  const newNotes = userNotes.filter(note => note.id !== noteId);
+  allNotes[userEmail] = newNotes;
+  fs.writeFileSync(notesPath, JSON.stringify(allNotes, null, 2));
+
+  res.json({ message: 'Note permanently deleted' });
+});
+
 
 // ========== Reminders APIs ==========
 app.get('/api/reminders', authenticate, (req, res) => {
@@ -93,3 +131,7 @@ app.post('/api/reminders', authenticate, (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+app.get('/logout', (req, res) => {
+  res.redirect('/logged-out.html'); // Create this file in your public/ folder
+});
+

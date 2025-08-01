@@ -8,31 +8,37 @@
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>📝 NOTE CRAFT</h1>
-      <button id="logoutBtn">Logout</button>
+    <!-- Header -->
+    <header class="app-header">
+      <h1 class="logo">📝 NOTE CRAFT</h1>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
     </header>
 
+    <!-- Sidebar Navigation -->
     <nav class="sidebar">
-      <button class="nav-btn" id="allNotesBtn">All Notes</button>
+      <button class="nav-btn active" id="allNotesBtn">All Notes</button>
       <button class="nav-btn" id="archiveBtn">Archive</button>
       <button class="nav-btn" id="trashBtn">Trash</button>
       <button class="nav-btn" id="calendarBtn">Calendar</button>
     </nav>
 
-    <main>
-      <form id="noteForm">
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Note Form -->
+      <form id="noteForm" class="note-form">
         <input type="text" id="noteTitle" placeholder="Title" required />
         <textarea id="noteContent" placeholder="Write your note..." required></textarea>
         <input type="date" id="reminderDate" />
         <button type="submit">Save Note</button>
       </form>
 
-      <div id="notes-container"></div>
+      <!-- Notes Container -->
+      <div id="notes-container" class="notes-container"></div>
 
-      <section id="calendarSection" class="hidden">
+      <!-- Calendar Section -->
+      <section id="calendarSection" class="calendar-section hidden">
         <h2>📅 Reminders Calendar</h2>
-        <div id="calendar-grid"></div>
+        <div id="calendar-grid" class="calendar-grid"></div>
       </section>
     </main>
   </div>
