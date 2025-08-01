@@ -7,73 +7,74 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <div class="logo">📝 NOTE CRAFT</div>
-      <div class="header-right">
-        <input type="text" id="searchInput" placeholder="Search notes..." />
-        <div class="account-icon">👤</div>
+  <header>
+    <div class="logo">📝 NOTE CRAFT</div>
+    <div class="header-right">
+      <h2>MY NOTES</h2>
+      <input type="text" placeholder="Search..." class="search-bar"/>
+      <div class="account-icon">👤
         <div class="account-menu hidden">
-          <button onclick="loginUser()">Login</button>
-          <button onclick="logoutUser()">Logout</button>
+          <button id="loginBtn">Login</button>
+          <button id="logoutBtn">Logout</button>
         </div>
       </div>
-      <ul class="nav">
-        <li class="nav-item" data-section="dashboard">🏠 Dashboard</li>
-        <li class="nav-item" data-section="add">➕ Add New</li>
-        <div class="status-indicators">
-          <span class="status green"></span>
-          <span class="status blue"></span>
-          <span class="status red"></span>
-        </div>
-        <li class="nav-item" data-section="calendar">📅 Calendar</li>
-        <li class="nav-item" data-section="archive">📦 Archive</li>
-        <li class="nav-item" data-section="trash">🗑️ Trash</li>
-      </ul>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="nav-item" data-section="dashboard">📋 Dashboard</div>
+      <div class="nav-item" data-section="add">➕ Add New</div>
+      <div class="status-lights">
+        <span class="light green"></span>
+        <span class="light blue"></span>
+        <span class="light red"></span>
+      </div>
+      <div class="nav-item" data-section="calendar">📅 Calendar</div>
+      <div class="nav-item" data-section="archive">🗂️ Archive</div>
+      <div class="nav-item" data-section="trash">🗑️ Trash</div>
     </aside>
 
-    <main class="main-content">
-      <header class="header">
-        <input type="text" id="searchInput" placeholder="Search..." />
-        <div class="account-wrapper">
-          <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="account-icon" />
-          <div class="account-menu hidden">
-            <button id="loginBtn">Login</button>
-            <button id="logoutBtn">Logout</button>
-          </div>
-        </div>
-      </header>
-
+    <main>
+      <!-- Dashboard -->
       <section id="dashboardView">
-        <h2>My Folders</h2>
-        <div id="folders" class="card-container"></div>
-        <h2>My Notes</h2>
-        <div id="notes" class="card-container"></div>
+        <h3>My Folders</h3>
+        <div id="folders" class="card-grid"></div>
+        <h3>My Notes</h3>
+        <div id="notes" class="card-grid"></div>
       </section>
 
+      <!-- Add New -->
       <section id="addNewView" class="hidden">
-        <h2>Add New Note</h2>
+        <h3>Add New Note</h3>
         <input type="text" id="noteTitle" placeholder="Title" />
         <input type="text" id="noteFolder" placeholder="Folder" />
-        <textarea id="noteContent" placeholder="Write your note..."></textarea>
+        <textarea id="noteContent" placeholder="Your note..."></textarea>
         <button onclick="saveNote()">Save</button>
       </section>
 
+      <!-- Calendar -->
       <section id="calendarView" class="hidden">
-        <h2>Calendar</h2>
-        <div id="calendar"></div>
+        <div class="calendar-header">
+          <button id="prevMonth">◀</button>
+          <h3 id="calendarTitle"></h3>
+          <button id="nextMonth">▶</button>
+        </div>
+        <div id="calendar" class="calendar-grid"></div>
       </section>
 
+      <!-- Archive -->
       <section id="archiveView" class="hidden">
-        <h2>Archive</h2>
-        <div id="archiveNotes" class="card-container"></div>
-        <div id="emptyArchive" class="empty-msg hidden">Nothing in Archive</div>
+        <h3>Archived Notes</h3>
+        <p id="emptyArchive">Nothing in Archive</p>
+        <div id="archiveNotes" class="card-grid"></div>
       </section>
 
+      <!-- Trash -->
       <section id="trashView" class="hidden">
-        <h2>Trash</h2>
-        <div id="trashNotes" class="card-container"></div>
-        <div id="emptyTrash" class="empty-msg hidden">Nothing in Trash</div>
+        <h3>Trash</h3>
+        <p id="emptyTrash">Nothing in Trash</p>
+        <div id="trashNotes" class="card-grid"></div>
       </section>
     </main>
   </div>
