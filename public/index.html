@@ -10,6 +10,14 @@
   <div class="container">
     <aside class="sidebar">
       <div class="logo">📝 NOTE CRAFT</div>
+      <div class="header-right">
+        <input type="text" id="searchInput" placeholder="Search notes..." />
+        <div class="account-icon">👤</div>
+        <div class="account-menu hidden">
+          <button onclick="loginUser()">Login</button>
+          <button onclick="logoutUser()">Logout</button>
+        </div>
+      </div>
       <ul class="nav">
         <li class="nav-item" data-section="dashboard">🏠 Dashboard</li>
         <li class="nav-item" data-section="add">➕ Add New</li>

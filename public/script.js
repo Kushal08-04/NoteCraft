@@ -2,7 +2,6 @@ let notes = JSON.parse(localStorage.getItem("notes") || "[]");
 let archived = JSON.parse(localStorage.getItem("archive") || "[]");
 let trashed = JSON.parse(localStorage.getItem("trash") || "[]");
 
-// Sections mapped by data-section
 const sections = {
   dashboard: document.getElementById("dashboardView"),
   add: document.getElementById("addNewView"),
@@ -11,26 +10,22 @@ const sections = {
   trash: document.getElementById("trashView")
 };
 
-// Navigation click handler
+// NAVIGATION
 document.querySelectorAll(".nav-item").forEach(item => {
   item.onclick = () => {
     Object.values(sections).forEach(sec => sec.classList.add("hidden"));
     sections[item.dataset.section].classList.remove("hidden");
-
-    switch (item.dataset.section) {
-      case "dashboard": renderDashboard(); break;
-      case "calendar": drawCalendar(); break;
-      case "archive": renderArchive(); break;
-      case "trash": renderTrash(); break;
-    }
+    if (item.dataset.section === "calendar") drawCalendar();
+    if (item.dataset.section === "archive") renderArchive();
+    if (item.dataset.section === "trash") renderTrash();
+    if (item.dataset.section === "dashboard") renderDashboard();
   };
 });
 
-// Save new note
 function saveNote() {
-  const title = document.getElementById("noteTitle").value.trim();
-  const folder = document.getElementById("noteFolder").value.trim();
-  const content = document.getElementById("noteContent").value.trim();
+  const title = document.getElementById("noteTitle").value;
+  const folder = document.getElementById("noteFolder").value;
+  const content = document.getElementById("noteContent").value;
   if (title && folder && content) {
     notes.push({ title, folder, content });
     localStorage.setItem("notes", JSON.stringify(notes));
@@ -43,7 +38,6 @@ function saveNote() {
   }
 }
 
-// Render dashboard
 function renderDashboard() {
   const folders = document.getElementById("folders");
   const notesDiv = document.getElementById("notes");
@@ -52,7 +46,7 @@ function renderDashboard() {
 
   const folderMap = {};
   notes.forEach(note => {
-    if (!folderMap[note.folder]) folderMap[note.folder] = [];
+    folderMap[note.folder] = folderMap[note.folder] || [];
     folderMap[note.folder].push(note);
   });
 
@@ -60,7 +54,7 @@ function renderDashboard() {
     const div = document.createElement("div");
     div.className = "card";
     div.innerHTML = `<strong>${folder}</strong><div class="menu">⋮</div>`;
-    addCardMenu(div, folderMap[folder][0], true);
+    addCardMenu(div, note => moveToTrash(note), folder);
     folders.appendChild(div);
   });
 
@@ -68,34 +62,27 @@ function renderDashboard() {
     const div = document.createElement("div");
     div.className = "card";
     div.innerHTML = `<strong>${note.title}</strong><p>${note.content}</p><div class="menu">⋮</div>`;
-    addCardMenu(div, note);
+    addCardMenu(div, note => moveToTrash(note), note);
     notesDiv.appendChild(div);
   });
 }
 
-// Add 3-dot menu to card
-function addCardMenu(card, noteData, isFolder = false) {
+function addCardMenu(card, callback, noteData) {
   const menu = card.querySelector(".menu");
   const menuBox = document.createElement("div");
   menuBox.className = "menu-options";
   menuBox.innerHTML = `
     <button onclick="archiveNote(${JSON.stringify(noteData).replace(/"/g, "'")})">Archive</button>
-    <button onclick="moveToTrash(${JSON.stringify(noteData).replace(/"/g, "'")})">Trash</button>
-  `;
+    <button onclick="moveToTrash(${JSON.stringify(noteData).replace(/"/g, "'")})">Trash</button>`;
   card.appendChild(menuBox);
   menu.onclick = e => {
     e.stopPropagation();
     document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
     menuBox.classList.toggle("show");
   };
+  window.addEventListener("click", () => menuBox.classList.remove("show"));
 }
 
-// Hide menu on outside click
-window.addEventListener("click", () => {
-  document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
-});
-
-// Move note to trash
 function moveToTrash(note) {
   trashed.push(note);
   notes = notes.filter(n => n.title !== note.title);
@@ -104,7 +91,6 @@ function moveToTrash(note) {
   renderDashboard();
 }
 
-// Archive a note
 function archiveNote(note) {
   archived.push(note);
   notes = notes.filter(n => n.title !== note.title);
@@ -113,13 +99,11 @@ function archiveNote(note) {
   renderDashboard();
 }
 
-// Trash view
 function renderTrash() {
   const trash = document.getElementById("trashNotes");
   const empty = document.getElementById("emptyTrash");
   trash.innerHTML = "";
-  if (trashed.length === 0) empty.classList.remove("hidden");
-  else empty.classList.add("hidden");
+  empty.classList.toggle("hidden", trashed.length !== 0);
 
   trashed.forEach(note => {
     const div = document.createElement("div");
@@ -131,19 +115,18 @@ function renderTrash() {
     div.appendChild(menuBox);
     div.querySelector(".menu").onclick = e => {
       e.stopPropagation();
+      document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
       menuBox.classList.toggle("show");
     };
     trash.appendChild(div);
   });
 }
 
-// Archive view
 function renderArchive() {
   const arch = document.getElementById("archiveNotes");
   const empty = document.getElementById("emptyArchive");
   arch.innerHTML = "";
-  if (archived.length === 0) empty.classList.remove("hidden");
-  else empty.classList.add("hidden");
+  empty.classList.toggle("hidden", archived.length !== 0);
 
   archived.forEach(note => {
     const div = document.createElement("div");
@@ -155,13 +138,13 @@ function renderArchive() {
     div.appendChild(menuBox);
     div.querySelector(".menu").onclick = e => {
       e.stopPropagation();
+      document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
       menuBox.classList.toggle("show");
     };
     arch.appendChild(div);
   });
 }
 
-// Restore from trash
 function restoreNote(note) {
   notes.push(note);
   trashed = trashed.filter(n => n.title !== note.title);
@@ -170,7 +153,6 @@ function restoreNote(note) {
   renderTrash();
 }
 
-// Unarchive
 function unarchiveNote(note) {
   notes.push(note);
   archived = archived.filter(n => n.title !== note.title);
@@ -179,24 +161,28 @@ function unarchiveNote(note) {
   renderArchive();
 }
 
-// Calendar rendering
+// FULL CALENDAR
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
 function drawCalendar() {
   const calendar = document.getElementById("calendar");
   calendar.innerHTML = "";
 
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const days = new Date(year, month + 1, 0).getDate();
-  const startDay = new Date(year, month, 1).getDay();
+  const title = document.getElementById("calendarTitle");
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const startDay = firstDay.getDay();
+
+  title.textContent = `${firstDay.toLocaleString("default", { month: "long" })} ${currentYear}`;
 
   for (let i = 0; i < startDay; i++) {
-    const empty = document.createElement("div");
-    empty.className = "calendar-day empty";
-    calendar.appendChild(empty);
+    const blank = document.createElement("div");
+    blank.className = "calendar-day blank";
+    calendar.appendChild(blank);
   }
 
-  for (let d = 1; d <= days; d++) {
+  for (let d = 1; d <= daysInMonth; d++) {
     const day = document.createElement("div");
     day.className = "calendar-day";
     day.textContent = d;
@@ -204,7 +190,25 @@ function drawCalendar() {
   }
 }
 
-// Account menu toggle logic
+document.getElementById("prevMonth").onclick = () => {
+  currentMonth--;
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
+  }
+  drawCalendar();
+};
+
+document.getElementById("nextMonth").onclick = () => {
+  currentMonth++;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  }
+  drawCalendar();
+};
+
+// Account icon dropdown
 const accountIcon = document.querySelector(".account-icon");
 const accountMenu = document.querySelector(".account-menu");
 
@@ -217,5 +221,12 @@ window.addEventListener("click", () => {
   accountMenu.classList.add("hidden");
 });
 
-// On page load
+document.getElementById("loginBtn").onclick = () => {
+  alert("Login clicked (connect with backend)");
+};
+document.getElementById("logoutBtn").onclick = () => {
+  alert("Logout clicked (connect with backend)");
+};
+
+// Start
 renderDashboard();
