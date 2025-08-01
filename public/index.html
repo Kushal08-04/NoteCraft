@@ -2,55 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NOTE CRAFT</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
+  <div class="container">
     <header>
-      <h1>NOTE CRAFT</h1>
+      <h1>📝 NOTE CRAFT</h1>
       <button id="logoutBtn">Logout</button>
     </header>
 
-    <aside class="sidebar">
-      <button data-view="all">All Notes</button>
-      <button data-view="archived">Archive</button>
-      <button data-view="deleted">Trash</button>
-      <button data-view="calendar">Calendar</button>
-    </aside>
+    <nav class="sidebar">
+      <button class="nav-btn" id="allNotesBtn">All Notes</button>
+      <button class="nav-btn" id="archiveBtn">Archive</button>
+      <button class="nav-btn" id="trashBtn">Trash</button>
+      <button class="nav-btn" id="calendarBtn">Calendar</button>
+    </nav>
 
     <main>
-      <section id="note-section">
-        <div class="toolbar">
-          <input type="text" id="note-title" placeholder="Title" />
-          <textarea id="note-content" placeholder="Write your note..."></textarea>
-          <input type="date" id="reminder-date" />
-          <button id="save-note">Save Note</button>
-        </div>
+      <form id="noteForm">
+        <input type="text" id="noteTitle" placeholder="Title" required />
+        <textarea id="noteContent" placeholder="Write your note..." required></textarea>
+        <input type="date" id="reminderDate" />
+        <button type="submit">Save Note</button>
+      </form>
 
-        <div id="notes-container"></div>
+      <section id="notesSection">
+        <!-- Notes will be dynamically added here -->
       </section>
 
-      <section id="calendar-section" class="hidden">
-        <h2>Reminders Calendar</h2>
-        <div id="calendar-grid"></div>
+      <section id="calendarSection" class="hidden">
+        <h2>📅 Reminders Calendar</h2>
+        <div id="calendarGrid">
+          <!-- Calendar content here -->
+        </div>
       </section>
     </main>
   </div>
-
-  <template id="note-template">
-    <div class="note">
-      <h3 class="note-title"></h3>
-      <p class="note-content"></p>
-      <small class="note-reminder"></small>
-      <div class="context-menu">
-        <button class="edit-note">Edit</button>
-        <button class="archive-note">Archive</button>
-        <button class="delete-note">Delete</button>
-      </div>
-    </div>
-  </template>
 
   <script src="script.js"></script>
 </body>

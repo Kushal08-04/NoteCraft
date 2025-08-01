@@ -6,6 +6,16 @@
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "notes",
+    "ibm-app-id",
+    "node",
+    "express",
+    "vanilla-js"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
