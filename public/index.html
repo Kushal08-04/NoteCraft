@@ -9,49 +9,40 @@
 </head>
 <body>
   <div class="container">
-    <header class="l-header">
-      <div class="left-header">
-        <img src="https://i.ibb.co/zWL8Yc1x/icon.png" alt="Logo" class="app-logo">
-        <h1 class="app-title">NOTE CRAFT</h1>
+    <header class="header">
+      <div class="header-left">
+        <img src="https://i.ibb.co/zWL8Yc1x/icon.png" class="app-logo" alt="Logo">
+        <h1>NOTE CRAFT</h1>
       </div>
-      <div class="right-header">
-        <h2>MY NOTES</h2>
-        <input type="text" id="search" placeholder="Search notes..." />
-        <div class="profile-section">
+      <div class="header-right">
+        <input type="text" id="search" placeholder="Search..." />
+        <div class="profile-box">
           <label for="profileUpload">
-            <img id="profilePic" src="https://i.ibb.co/RkWxTFQn/default.png" alt="Profile Icon" />
+            <img id="profilePic" src="https://i.ibb.co/RkWxTFQn/default.png" alt="Profile" />
           </label>
-          <input type="file" id="profileUpload" accept="image/*" hidden />
+          <input type="file" id="profileUpload" hidden />
           <span id="userName"></span>
           <button id="loginBtn">Login</button>
-          <button id="logoutBtn" style="display:none;">Logout</button>
+          <button id="logoutBtn" style="display: none;">Logout</button>
         </div>
       </div>
     </header>
 
     <aside class="sidebar">
-      <button onclick="showSection('add')">
-        <img src="https://i.ibb.co/jZVznt3V/add.png" class="icon" /> Add New
-      </button>
+      <button onclick="showSection('add')"><img src="https://i.ibb.co/jZVznt3V/add.png" class="icon"> Add New</button>
       <div class="status-circles">
         <span class="circle green"></span>
         <span class="circle blue"></span>
         <span class="circle red"></span>
       </div>
-      <button onclick="showSection('calendar')">
-        <img src="https://i.ibb.co/FbTZ4yjc/calendar.png" class="icon" /> Calendar
-      </button>
-      <button onclick="showSection('archive')">
-        <img src="https://i.ibb.co/mCM3H0r3/archive.png" class="icon" /> Archive
-      </button>
-      <button onclick="showSection('trash')">
-        <img src="https://i.ibb.co/XxGXBBCm/trash.png" class="icon" /> Trash
-      </button>
+      <button onclick="showSection('calendar')"><img src="https://i.ibb.co/FbTZ4yjc/calendar.png" class="icon"> Calendar</button>
+      <button onclick="showSection('archive')"><img src="https://i.ibb.co/mCM3H0r3/archive.png" class="icon"> Archive</button>
+      <button onclick="showSection('trash')"><img src="https://i.ibb.co/XxGXBBCm/trash.png" class="icon"> Trash</button>
     </aside>
 
     <main class="main">
       <section id="add" class="section">
-        <h3>Add New</h3>
+        <h3>Add New Note</h3>
         <form id="noteForm">
           <input type="text" id="title" placeholder="Title" required />
           <input type="text" id="folder" placeholder="Folder (e.g., Class Notes)" />
@@ -61,37 +52,22 @@
       </section>
 
       <section id="folders" class="section">
-        <h3>My Folders</h3>
-        <div id="folderContainer" class="card-container">
-          <!-- Folders will be rendered here -->
-        </div>
+        <h3>Recent Folders</h3>
+        <div id="folderContainer" class="card-container"></div>
       </section>
 
       <section id="notes" class="section">
         <h3>My Notes</h3>
-        <div id="notesContainer" class="card-container">
-          <!-- Notes will be rendered here -->
-        </div>
+        <div id="notesContainer" class="card-container"></div>
       </section>
 
       <section id="calendar" class="section" style="display:none;">
         <h3>Calendar</h3>
-        <div id="calendarSection" class="calendar">
-          <div class="calendar-header">
-            <button id="prevMonth">⬅️</button>
-            <span id="monthYear"></span>
-            <button id="nextMonth">➡️</button>
-          </div>
-          <table class="calendar-table">
-            <tbody id="calendarBody"></tbody>
-          </table>
-          <ul id="reminderList"></ul>
-        </div>
+        <div id="calendarView"></div>
       </section>
 
-
       <section id="archive" class="section" style="display:none;">
-        <h3>Archived Items</h3>
+        <h3>Archived Notes</h3>
         <div id="archiveContainer" class="card-container"></div>
       </section>
 

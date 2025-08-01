@@ -1,196 +1,139 @@
-body {
+* {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #f9f9f9;
+  padding: 0;
+  box-sizing: border-box;
 }
-
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f9f9fb;
+  color: #333;
+}
 .container {
   display: flex;
+  flex-direction: column;
   height: 100vh;
-  flex-direction: row;
 }
 
-.l-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  background: #ffffff;
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 0 20px 0 260px;
-  z-index: 10;
+  padding: 1em 2em;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
 }
-
-.left-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 240px;
-  height: 100vh;
-  background: #ffffff;
+.header-left {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding-top: 20px;
-  border-right: 1px solid #e0e0e0;
-  z-index: 9;
 }
-
 .app-logo {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  margin-right: 10px;
 }
-
-.app-title {
-  margin: 10px 0;
-  font-weight: bold;
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+#search {
+  padding: 0.5em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.profile-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.profile-box img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .sidebar {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  height: calc(100% - 72px);
+  width: 220px;
+  background: #fff;
+  border-right: 1px solid #eee;
+  padding: 1em;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 100px;
-  left: 0;
-  width: 240px;
-  padding: 20px;
-  background: #fff;
-  height: calc(100% - 100px);
-  border-right: 1px solid #eee;
+  gap: 1em;
 }
-
 .sidebar button {
   background: none;
   border: none;
-  padding: 10px 5px;
-  font-weight: 500;
+  font-size: 1em;
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.5em;
   cursor: pointer;
 }
-
 .sidebar .icon {
   width: 20px;
 }
-
 .status-circles {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 20px 0;
-  align-items: center;
+  gap: 5px;
 }
-
 .circle {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
 }
-
-.green { background-color: lightgreen; }
-.blue { background-color: lightblue; }
-.red { background-color: lightcoral; }
-
-.calendar {
-  display: none;
-  background: #fff;
-  padding: 1em;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-.calendar.visible {
-  display: block;
-}
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5em;
-}
-.calendar-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1em;
-}
-.calendar-table td {
-  text-align: center;
-  padding: 8px;
-  cursor: pointer;
-}
-.calendar-table td:hover {
-  background-color: #e0f7fa;
-}
-#reminderList li {
-  list-style: none;
-  margin-bottom: 0.3em;
-}
-
+.green { background: lightgreen; }
+.blue { background: lightblue; }
+.red { background: lightcoral; }
 
 .main {
-  margin-left: 260px;
-  margin-top: 100px;
-  padding: 20px;
-  width: 100%;
+  margin-left: 240px;
+  padding: 2em;
   overflow-y: auto;
 }
-
 .section {
-  margin-top: 20px;
+  margin-bottom: 2em;
 }
-
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 1em;
+  margin-top: 1em;
 }
-
-.note-card, .folder-card {
-  background: #f0f8ff;
-  border-radius: 10px;
-  padding: 16px;
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1em;
   width: 200px;
-  min-height: 120px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   position: relative;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
-
-form input, form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+.card .title {
+  font-weight: bold;
+  margin-bottom: 0.5em;
 }
-
-form button {
-  padding: 10px 16px;
-  background: #4f46e5;
-  color: white;
+.card .content {
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+.card .date {
+  font-size: 0.75em;
+  color: #999;
+}
+.card.folder {
+  cursor: pointer;
+}
+button[type="submit"] {
+  margin-top: 1em;
+  padding: 0.5em 1em;
   border: none;
-  border-radius: 8px;
-}
-
-#search {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 300px;
-}
-
-.profile-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.profile-section img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  background: #007BFF;
+  color: white;
+  border-radius: 6px;
   cursor: pointer;
 }
