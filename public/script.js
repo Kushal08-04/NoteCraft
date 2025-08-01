@@ -78,7 +78,10 @@ function loadNotes() {
 
   state.notes.forEach(note => {
     const el = document.createElement("div");
+    const colors = ["#fef3c7", "#fbcfe8", "#bae6fd", "#bbf7d0"];
     el.className = "note-card";
+    el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
     el.innerHTML = `<strong>${note.title}</strong><br>${note.content}<div class="note-options">⋮</div>`;
     const menu = document.createElement("div");
     menu.className = "note-menu hidden";
