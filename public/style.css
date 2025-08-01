@@ -1,139 +1,164 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f9f9fb;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f7f7fa;
   color: #333;
 }
-.container {
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #fff;
+  padding: 1rem;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  gap: 1rem;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  color: #333;
+}
+
+.status-circles {
+  display: flex;
+  gap: 8px;
+  margin-left: 0.5rem;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.green { background-color: lightgreen; }
+.blue { background-color: lightblue; }
+.red { background-color: lightcoral; }
+
+.main {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1em 2em;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
 }
-.header-left {
-  display: flex;
-  align-items: center;
-}
-.app-logo {
-  width: 32px;
-  margin-right: 10px;
-}
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-}
-#search {
-  padding: 0.5em;
-  border-radius: 8px;
+
+#searchBar {
+  padding: 8px;
+  width: 180px;
+  border-radius: 5px;
   border: 1px solid #ccc;
 }
-.profile-box {
+
+#user-profile {
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 10px;
 }
-.profile-box img {
+
+#user-profile img {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  cursor: pointer;
 }
 
-.sidebar {
-  position: fixed;
-  top: 72px;
-  left: 0;
-  height: calc(100% - 72px);
-  width: 220px;
-  background: #fff;
-  border-right: 1px solid #eee;
-  padding: 1em;
+.add-section {
+  margin: 1rem 0;
   display: flex;
-  flex-direction: column;
-  gap: 1em;
+  gap: 10px;
 }
-.sidebar button {
-  background: none;
+
+.add-section input,
+.add-section textarea {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#saveBtn {
+  background-color: #2563eb;
+  color: white;
   border: none;
-  font-size: 1em;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
   cursor: pointer;
 }
-.sidebar .icon {
-  width: 20px;
-}
-.status-circles {
-  display: flex;
-  gap: 5px;
-}
-.circle {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-.green { background: lightgreen; }
-.blue { background: lightblue; }
-.red { background: lightcoral; }
 
-.main {
-  margin-left: 240px;
-  padding: 2em;
-  overflow-y: auto;
-}
-.section {
-  margin-bottom: 2em;
-}
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 1em;
-  margin-top: 1em;
+  gap: 1rem;
+  margin-top: 1rem;
 }
+
 .card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1em;
+  background-color: var(--pastel);
+  border-radius: 10px;
+  padding: 1rem;
   width: 200px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  position: relative;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-.card .title {
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.tab {
+  background: none;
+  border: none;
   font-weight: bold;
-  margin-bottom: 0.5em;
-}
-.card .content {
-  font-size: 0.9em;
-  margin-bottom: 1em;
-}
-.card .date {
-  font-size: 0.75em;
-  color: #999;
-}
-.card.folder {
   cursor: pointer;
 }
-button[type="submit"] {
-  margin-top: 1em;
-  padding: 0.5em 1em;
-  border: none;
-  background: #007BFF;
-  color: white;
-  border-radius: 6px;
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 80%;
+  max-width: 800px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 24px;
   cursor: pointer;
 }

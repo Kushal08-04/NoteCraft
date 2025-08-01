@@ -5,76 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NOTE CRAFT</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="header-left">
-        <img src="https://i.ibb.co/zWL8Yc1x/icon.png" class="app-logo" alt="Logo">
-        <h1>NOTE CRAFT</h1>
-      </div>
-      <div class="header-right">
-        <input type="text" id="search" placeholder="Search..." />
-        <div class="profile-box">
-          <label for="profileUpload">
-            <img id="profilePic" src="https://i.ibb.co/RkWxTFQn/default.png" alt="Profile" />
-          </label>
-          <input type="file" id="profileUpload" hidden />
-          <span id="userName"></span>
-          <button id="loginBtn">Login</button>
-          <button id="logoutBtn" style="display: none;">Logout</button>
-        </div>
-      </div>
-    </header>
-
+  <div class="app">
     <aside class="sidebar">
-      <button onclick="showSection('add')"><img src="https://i.ibb.co/jZVznt3V/add.png" class="icon"> Add New</button>
+      <div class="logo">📝 NOTE CRAFT</div>
+      <button id="addNoteBtn" class="sidebar-btn">➕ Add New</button>
       <div class="status-circles">
         <span class="circle green"></span>
         <span class="circle blue"></span>
         <span class="circle red"></span>
       </div>
-      <button onclick="showSection('calendar')"><img src="https://i.ibb.co/FbTZ4yjc/calendar.png" class="icon"> Calendar</button>
-      <button onclick="showSection('archive')"><img src="https://i.ibb.co/mCM3H0r3/archive.png" class="icon"> Archive</button>
-      <button onclick="showSection('trash')"><img src="https://i.ibb.co/XxGXBBCm/trash.png" class="icon"> Trash</button>
+      <button class="sidebar-btn" id="calendarBtn">📅 Calendar</button>
+      <button class="sidebar-btn" id="archiveBtn">🗃️ Archive</button>
+      <button class="sidebar-btn" id="trashBtn">🗑️ Trash</button>
     </aside>
 
     <main class="main">
-      <section id="add" class="section">
-        <h3>Add New Note</h3>
-        <form id="noteForm">
-          <input type="text" id="title" placeholder="Title" required />
-          <input type="text" id="folder" placeholder="Folder (e.g., Class Notes)" />
-          <textarea id="content" placeholder="Write your note..." required></textarea>
-          <button type="submit">Save</button>
-        </form>
+      <header class="header">
+        <div class="header-left">
+          <h2>MY NOTES</h2>
+        </div>
+        <div class="header-right">
+          <input type="text" id="searchBar" placeholder="Search..." />
+          <div id="user-profile">
+            <img src="default-profile.png" alt="Profile" />
+            <button id="loginBtn">Login</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="add-section">
+        <input id="noteTitle" placeholder="Title" />
+        <input id="noteFolder" placeholder="Folder (e.g., Class Notes)" />
+        <textarea id="noteContent" placeholder="Write your note..."></textarea>
+        <button id="saveBtn">Save</button>
       </section>
 
-      <section id="folders" class="section">
+      <section class="folder-section">
         <h3>Recent Folders</h3>
-        <div id="folderContainer" class="card-container"></div>
+        <div class="tabs">
+          <button class="tab active">Today</button>
+          <button class="tab">This Week</button>
+          <button class="tab">This Month</button>
+        </div>
+        <div id="foldersContainer" class="card-container"></div>
       </section>
 
-      <section id="notes" class="section">
+      <section class="note-section">
         <h3>My Notes</h3>
+        <div class="tabs">
+          <button class="tab active">Today</button>
+          <button class="tab">This Week</button>
+          <button class="tab">This Month</button>
+        </div>
         <div id="notesContainer" class="card-container"></div>
       </section>
 
-      <section id="calendar" class="section" style="display:none;">
-        <h3>Calendar</h3>
-        <div id="calendarView"></div>
-      </section>
-
-      <section id="archive" class="section" style="display:none;">
-        <h3>Archived Notes</h3>
-        <div id="archiveContainer" class="card-container"></div>
-      </section>
-
-      <section id="trash" class="section" style="display:none;">
-        <h3>Trash</h3>
-        <div id="trashContainer" class="card-container"></div>
-      </section>
+      <div id="calendarModal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close" onclick="closeCalendar()">&times;</span>
+          <iframe src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FKolkata" style="border: 0" width="100%" height="500" frameborder="0" scrolling="no"></iframe>
+        </div>
+      </div>
     </main>
   </div>
 

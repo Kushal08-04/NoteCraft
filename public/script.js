@@ -1,55 +1,41 @@
-const sections = document.querySelectorAll('.section');
-function showSection(id) {
-  sections.forEach(section => {
-    section.style.display = section.id === id ? 'block' : 'none';
-  });
-}
+const noteTitle = document.getElementById('noteTitle');
+const noteFolder = document.getElementById('noteFolder');
+const noteContent = document.getElementById('noteContent');
+const saveBtn = document.getElementById('saveBtn');
+const notesContainer = document.getElementById('notesContainer');
+const foldersContainer = document.getElementById('foldersContainer');
+const calendarBtn = document.getElementById('calendarBtn');
 
-document.getElementById('noteForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const title = document.getElementById('title').value;
-  const folder = document.getElementById('folder').value || 'General';
-  const content = document.getElementById('content').value;
+const pastelColors = ['#cce5ff', '#f8d7da', '#d4edda', '#fff3cd', '#e2e3e5', '#fefefe'];
 
-  const noteCard = document.createElement('div');
-  noteCard.className = 'card';
-  noteCard.style.backgroundColor = getRandomPastel();
-
-  noteCard.innerHTML = `
-    <div class="title">${title}</div>
-    <div class="content">${content}</div>
-    <div class="date">${new Date().toLocaleString()}</div>
+function createCard(title, content, container) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+  card.style.setProperty('--pastel', pastelColors[Math.floor(Math.random() * pastelColors.length)]);
+  card.innerHTML = `
+    <strong>${title}</strong>
+    <p>${content}</p>
+    <small>${new Date().toLocaleDateString()} | ${new Date().toLocaleTimeString()}</small>
   `;
-
-  document.getElementById('notesContainer').appendChild(noteCard);
-  e.target.reset();
-});
-
-function getRandomPastel() {
-  const colors = ['#fde2e4', '#cfe0e8', '#e2f0cb', '#fef6e4', '#e3d5ca', '#d8e2dc'];
-  return colors[Math.floor(Math.random() * colors.length)];
+  container.prepend(card);
 }
 
-document.getElementById('profileUpload').addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      document.getElementById('profilePic').src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  }
+saveBtn.addEventListener('click', () => {
+  const title = noteTitle.value.trim();
+  const folder = noteFolder.value.trim();
+  const content = noteContent.value.trim();
+  if (!title || !folder || !content) return alert("All fields are required!");
+  createCard(folder, "", foldersContainer);
+  createCard(title, content, notesContainer);
+  noteTitle.value = '';
+  noteFolder.value = '';
+  noteContent.value = '';
 });
 
-// Placeholder for auth
-document.getElementById('loginBtn').onclick = () => {
-  document.getElementById('loginBtn').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'inline';
-  document.getElementById('userName').textContent = 'Welcome!';
-};
+calendarBtn.addEventListener('click', () => {
+  document.getElementById('calendarModal').classList.remove('hidden');
+});
 
-document.getElementById('logoutBtn').onclick = () => {
-  document.getElementById('loginBtn').style.display = 'inline';
-  document.getElementById('logoutBtn').style.display = 'none';
-  document.getElementById('userName').textContent = '';
-};
+function closeCalendar() {
+  document.getElementById('calendarModal').classList.add('hidden');
+}
