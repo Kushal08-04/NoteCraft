@@ -2,71 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NOTE CRAFT</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="https://i.ibb.co/TMmNJJ0L/download-4.jpg" />
 </head>
 <body>
-  <header>
-    <div class="logo-title">
-      <img src="https://i.ibb.co/TMmNJJ0L/download-4.jpg" alt="NOTE CRAFT" class="app-icon" />
-      <span>NOTE CRAFT</span>
-    </div>
-    <div class="search-wrapper">
-      <input type="text" id="searchInput" placeholder="Search notes or folders..." />
-    </div>
-    <div class="account-menu">
-      <img src="https://i.ibb.co/Ndz82vWh/Contacts-blue-icon.jpg" alt="User" id="accountIcon" />
-      <div class="account-popup hidden" id="accountPopup">
-        <button id="loginBtn">Login</button>
-        <button id="logoutBtn">Logout</button>
+  <div class="app">
+    <header>
+      <h1>NOTE CRAFT</h1>
+      <button id="logoutBtn">Logout</button>
+    </header>
+
+    <aside class="sidebar">
+      <button data-view="all">All Notes</button>
+      <button data-view="archived">Archive</button>
+      <button data-view="deleted">Trash</button>
+      <button data-view="calendar">Calendar</button>
+    </aside>
+
+    <main>
+      <section id="note-section">
+        <div class="toolbar">
+          <input type="text" id="note-title" placeholder="Title" />
+          <textarea id="note-content" placeholder="Write your note..."></textarea>
+          <input type="date" id="reminder-date" />
+          <button id="save-note">Save Note</button>
+        </div>
+
+        <div id="notes-container"></div>
+      </section>
+
+      <section id="calendar-section" class="hidden">
+        <h2>Reminders Calendar</h2>
+        <div id="calendar-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="note-template">
+    <div class="note">
+      <h3 class="note-title"></h3>
+      <p class="note-content"></p>
+      <small class="note-reminder"></small>
+      <div class="context-menu">
+        <button class="edit-note">Edit</button>
+        <button class="archive-note">Archive</button>
+        <button class="delete-note">Delete</button>
       </div>
     </div>
-  </header>
-
-  <aside>
-    <nav>
-      <ul>
-        <li id="dashboardBtn">Dashboard</li>
-        <li id="addNewBtn">Add New</li>
-        <li><span class="status green"></span><span class="status blue"></span><span class="status red"></span></li>
-        <li id="calendarBtn">Calendar</li>
-        <li id="archiveBtn">Archive</li>
-        <li id="trashBtn">Trash</li>
-      </ul>
-    </nav>
-  </aside>
-
-  <main>
-    <section id="addNewSection" class="hidden">
-      <input type="text" id="noteTitle" placeholder="Note Title" />
-      <input type="text" id="folderName" placeholder="Folder Name (optional)" />
-      <textarea id="noteContent" placeholder="Write your note here..."></textarea>
-      <button id="saveNoteBtn">Save</button>
-    </section>
-
-    <section id="dashboardSection">
-      <h2>MY NOTES</h2>
-      <div id="recentFolders"></div>
-      <div id="myNotes"></div>
-    </section>
-
-    <section id="calendarSection" class="hidden">
-      <h2>Calendar</h2>
-      <div id="calendarContainer"></div>
-    </section>
-
-    <section id="archiveSection" class="hidden">
-      <h2>Archived</h2>
-      <div id="archivedItems"></div>
-    </section>
-
-    <section id="trashSection" class="hidden">
-      <h2>Trash</h2>
-      <div id="trashedItems"></div>
-    </section>
-  </main>
+  </template>
 
   <script src="script.js"></script>
 </body>

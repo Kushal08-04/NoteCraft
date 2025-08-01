@@ -1,176 +1,178 @@
-const state = {
-  notes: [],
-  reminders: [],
-  currentView: 'dashboard'
-};
+let notes = [];
+let folders = [];
+let reminders = [];
+let userEmail = null;
 
-// Init
-document.addEventListener("DOMContentLoaded", () => {
-  setupEventListeners();
-  loadNotes();
-  loadCalendar();
-  loadReminders();
-});
+// Get user from IBM App ID
+async function getUser() {
+  const res = await fetch('/api/user');
+  const data = await res.json();
+  userEmail = data.email;
+}
 
-function setupEventListeners() {
-  document.getElementById("dashboardBtn").onclick = showDashboard;
-  document.getElementById("addNewBtn").onclick = () => showSection("addNewSection");
-  document.getElementById("calendarBtn").onclick = () => showSection("calendarSection");
-  document.getElementById("archiveBtn").onclick = () => showSection("archiveSection");
-  document.getElementById("trashBtn").onclick = () => showSection("trashSection");
-  document.getElementById("saveNoteBtn").onclick = saveNote;
-  document.getElementById("searchInput").addEventListener("input", handleSearch);
-  document.getElementById("accountIcon").onclick = toggleAccountMenu;
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest('.account-menu')) {
-      document.getElementById("accountPopup").classList.add("hidden");
-    }
+// Load all data from server
+async function loadData() {
+  const notesRes = await fetch('/api/notes');
+  notes = await notesRes.json();
+
+  const remindersRes = await fetch('/api/reminders');
+  reminders = await remindersRes.json();
+
+  renderNotes();
+  renderCalendar();
+}
+
+function renderNotes() {
+  const notesContainer = document.getElementById('notes-container');
+  notesContainer.innerHTML = '';
+
+  const filteredNotes = notes.filter(n => n.status === 'active');
+
+  filteredNotes.forEach(note => {
+    const card = document.createElement('div');
+    card.className = `card ${note.color}`;
+    card.innerHTML = `
+      <div class="card-menu" onclick="showMenu(event, '${note.id}')">⋮</div>
+      <div class="card-title">${note.title}</div>
+      <p>${note.content}</p>
+      <small>${note.date}</small>
+    `;
+    notesContainer.appendChild(card);
   });
 }
 
-function showSection(id) {
-  ["dashboardSection", "addNewSection", "calendarSection", "archiveSection", "trashSection"].forEach(sec => {
-    document.getElementById(sec).classList.add("hidden");
-  });
-  document.getElementById(id).classList.remove("hidden");
-  state.currentView = id;
-}
+function renderCalendar() {
+  const calendarGrid = document.getElementById('calendar-grid');
+  calendarGrid.innerHTML = '';
 
-function toggleAccountMenu() {
-  const popup = document.getElementById("accountPopup");
-  popup.classList.toggle("hidden");
-}
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-function saveNote() {
-  const title = document.getElementById("noteTitle").value;
-  const folder = document.getElementById("folderName").value;
-  const content = document.getElementById("noteContent").value;
-  if (!title && !content) return;
-
-  const note = {
-    id: Date.now(),
-    title,
-    folder,
-    content,
-    status: "active",
-    date: new Date().toLocaleDateString()
-  };
-
-  state.notes.push(note);
-  localStorage.setItem("notes", JSON.stringify(state.notes));
-  loadNotes();
-  showDashboard();
-}
-
-function loadNotes() {
-  state.notes = JSON.parse(localStorage.getItem("notes")) || [];
-  const foldersEl = document.getElementById("recentFolders");
-  const notesEl = document.getElementById("myNotes");
-  const archived = document.getElementById("archivedItems");
-  const trashed = document.getElementById("trashedItems");
-
-  foldersEl.innerHTML = "";
-  notesEl.innerHTML = "";
-  archived.innerHTML = "";
-  trashed.innerHTML = "";
-
-  const folderSet = new Set();
-
-  state.notes.forEach(note => {
-    const el = document.createElement("div");
-    const colors = ["#fef3c7", "#fbcfe8", "#bae6fd", "#bbf7d0"];
-    el.className = "note-card";
-    el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-    el.innerHTML = `<strong>${note.title}</strong><br>${note.content}<div class="note-options">⋮</div>`;
-    const menu = document.createElement("div");
-    menu.className = "note-menu hidden";
-
-    if (note.status === "active") {
-      menu.innerHTML = `<button onclick="archiveNote(${note.id})">Archive</button><button onclick="trashNote(${note.id})">Trash</button>`;
-      if (note.folder) {
-        if (!folderSet.has(note.folder)) {
-          foldersEl.appendChild(el.cloneNode(true));
-          folderSet.add(note.folder);
-        }
-      } else {
-        notesEl.appendChild(el);
-      }
-    } else if (note.status === "archived") {
-      menu.innerHTML = `<button onclick="unarchiveNote(${note.id})">Unarchive</button>`;
-      archived.appendChild(el);
-    } else if (note.status === "trashed") {
-      menu.innerHTML = `<button onclick="deleteNote(${note.id})">Delete</button><button onclick="restoreNote(${note.id})">Restore</button>`;
-      trashed.appendChild(el);
-    }
-  });
-}
-
-function archiveNote(id) {
-  updateNoteStatus(id, "archived");
-}
-function trashNote(id) {
-  updateNoteStatus(id, "trashed");
-}
-function restoreNote(id) {
-  updateNoteStatus(id, "active");
-}
-function deleteNote(id) {
-  state.notes = state.notes.filter(n => n.id !== id);
-  localStorage.setItem("notes", JSON.stringify(state.notes));
-  loadNotes();
-}
-function unarchiveNote(id) {
-  updateNoteStatus(id, "active");
-}
-function updateNoteStatus(id, status) {
-  const note = state.notes.find(n => n.id === id);
-  if (note) note.status = status;
-  localStorage.setItem("notes", JSON.stringify(state.notes));
-  loadNotes();
-}
-
-function handleSearch(e) {
-  const query = e.target.value.toLowerCase();
-  const allCards = document.querySelectorAll(".note-card");
-  allCards.forEach(card => {
-    card.style.display = card.textContent.toLowerCase().includes(query) ? "block" : "none";
-  });
-}
-
-function loadCalendar() {
-  const container = document.getElementById("calendarContainer");
-  container.innerHTML = "";
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  days.forEach(d => container.innerHTML += `<div><strong>${d}</strong></div>`);
-
-  const date = new Date();
-  const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-  const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  const firstDay = monthStart.getDay();
-  const daysInMonth = monthEnd.getDate();
-
-  for (let i = 0; i < firstDay; i++) container.innerHTML += `<div></div>`;
   for (let d = 1; d <= daysInMonth; d++) {
-    const cell = document.createElement("div");
-    cell.className = "calendar-day";
-    cell.textContent = d;
-    cell.onclick = () => {
-      const reminder = prompt("Add reminder for " + d);
-      if (reminder) {
-        state.reminders.push({ day: d, text: reminder });
-        localStorage.setItem("reminders", JSON.stringify(state.reminders));
-        alert("Reminder saved!");
-      }
-    };
-    container.appendChild(cell);
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day';
+    cell.innerText = d;
+
+    const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const hasReminder = reminders.some(r => r.date === dayString);
+
+    if (hasReminder) {
+      const dot = document.createElement('div');
+      dot.className = 'reminder-dot';
+      cell.appendChild(dot);
+    }
+
+    calendarGrid.appendChild(cell);
   }
 }
 
-function loadReminders() {
-  state.reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+function showMenu(e, noteId) {
+  e.stopPropagation();
+  const menu = document.createElement('div');
+  menu.className = 'context-menu';
+  menu.innerHTML = `
+    <button onclick="editNote('${noteId}')">Edit</button>
+    <button onclick="archiveNote('${noteId}')">Archive</button>
+    <button onclick="deleteNote('${noteId}')">Delete</button>
+  `;
+  document.body.appendChild(menu);
+  menu.style.left = `${e.pageX}px`;
+  menu.style.top = `${e.pageY}px`;
+
+  document.addEventListener('click', () => {
+    if (menu) menu.remove();
+  }, { once: true });
 }
 
-function showDashboard() {
-  showSection("dashboardSection");
+async function addNote(title, content, color = 'yellow') {
+  const newNote = {
+    id: Date.now().toString(),
+    title,
+    content,
+    date: new Date().toLocaleDateString(),
+    color,
+    status: 'active',
+    email: userEmail
+  };
+
+  notes.push(newNote);
+  localStorage.setItem('notes', JSON.stringify(notes));
+  renderNotes();
+
+  await fetch('/api/notes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newNote)
+  });
 }
+
+async function archiveNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (note) {
+    note.status = 'archived';
+    renderNotes();
+    await fetch('/api/notes/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(note)
+    });
+  }
+}
+
+async function deleteNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (note) {
+    note.status = 'deleted';
+    renderNotes();
+    await fetch('/api/notes/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(note)
+    });
+  }
+}
+
+function editNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+
+  const newTitle = prompt('Edit title:', note.title);
+  const newContent = prompt('Edit content:', note.content);
+  if (newTitle !== null && newContent !== null) {
+    note.title = newTitle;
+    note.content = newContent;
+    renderNotes();
+
+    fetch('/api/notes/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(note)
+    });
+  }
+}
+
+// Add reminder
+async function addReminder(date, text) {
+  const reminder = {
+    id: Date.now().toString(),
+    date,
+    text,
+    email: userEmail
+  };
+  reminders.push(reminder);
+  renderCalendar();
+
+  await fetch('/api/reminders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(reminder)
+  });
+}
+
+// Startup
+document.addEventListener('DOMContentLoaded', async () => {
+  await getUser();
+  await loadData();
+});
