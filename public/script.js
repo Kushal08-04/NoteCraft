@@ -191,3 +191,5 @@ document.addEventListener('DOMContentLoaded', async function () {
   document.getElementById('trashBtn').addEventListener('click', () => {
     renderNotes('deleted');
     document.getElementById('calendar-grid').style.display = 'none';
+  });
+});
