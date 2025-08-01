@@ -5,63 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NOTE CRAFT</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="script.js" defer></script>
 </head>
 <body>
-  <header>
-    <div class="header-left">
-      <img src="https://i.ibb.co/zWL8Yc1/icon.png" alt="icon" />
-      <h1>NOTE CRAFT</h1>
-    </div>
-    <div class="header-right">
-      <h2>MY NOTES</h2>
-      <input type="text" id="searchInput" placeholder="Search..." />
-      <div class="account-icon" id="accountIcon">👤</div>
-      <div class="account-menu" id="accountMenu">
-        <button id="loginBtn">Login</button>
-        <button id="logoutBtn">Logout</button>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo-section">
+        <img src="https://i.ibb.co/zWL8Yc1/note-icon.png" class="logo" />
+        <h1>NOTE CRAFT</h1>
+        <button class="toggle-btn">&#9776;</button>
       </div>
-    </div>
-  </header>
+      <ul class="nav">
+        <li data-section="dashboard" class="active">🏠 Dashboard</li>
+        <li data-section="addNew">➕ Add New</li>
+        <div class="status-circles">
+          <span class="circle green"></span>
+          <span class="circle blue"></span>
+          <span class="circle red"></span>
+        </div>
+        <li data-section="calendar">📅 Calendar</li>
+        <li data-section="archive">🗂️ Archive</li>
+        <li data-section="trash">🗑️ Trash</li>
+      </ul>
+    </aside>
 
-  <aside id="sidebar">
-    <button id="toggleSidebar">☰</button>
-    <ul>
-      <li data-page="dashboard">🏠 Dashboard</li>
-      <li data-page="add">➕ Add New</li>
-      <div class="status-circles">
-        <span class="green"></span>
-        <span class="blue"></span>
-        <span class="red"></span>
-      </div>
-      <li data-page="calendar">📅 Calendar</li>
-      <li data-page="archive">📁 Archive</li>
-      <li data-page="trash">🗑️ Trash</li>
-    </ul>
-  </aside>
+    <main>
+      <header>
+        <h2>MY NOTES</h2>
+        <input type="text" id="search" placeholder="Search..." />
+        <div class="user-icon" id="userIcon">👤</div>
+        <div id="userMenu" class="user-menu hidden">
+          <button id="loginBtn">Login</button>
+          <button id="logoutBtn">Logout</button>
+        </div>
+      </header>
 
-  <main id="main-content">
-    <!-- Content dynamically inserted -->
-  </main>
+      <section id="dashboard" class="section">
+        <h3>Recent Folders</h3>
+        <div class="folder-container" id="folderContainer"></div>
+        <h3>My Notes</h3>
+        <div class="note-container" id="noteContainer"></div>
+      </section>
 
-  <!-- Add Modal -->
-  <div id="addNoteModal" class="modal">
-    <div class="modal-content">
-      <h2>Add New Note</h2>
-      <input type="text" id="noteTitle" placeholder="Title" />
-      <input type="text" id="noteFolder" placeholder="Folder" />
-      <textarea id="noteContent" placeholder="Note..."></textarea>
-      <button id="saveNote">Save</button>
-    </div>
+      <section id="addNew" class="section hidden">
+        <h3>Add New Note</h3>
+        <input type="text" id="noteTitle" placeholder="Note Title" />
+        <input type="text" id="noteFolder" placeholder="Folder Name" />
+        <textarea id="noteContent" placeholder="Write your note..."></textarea>
+        <button id="saveNote">Save</button>
+      </section>
+
+      <section id="calendar" class="section hidden">
+        <h3>Calendar (Coming Soon)</h3>
+      </section>
+
+      <section id="archive" class="section hidden">
+        <h3>Archived Notes</h3>
+        <div id="archiveContainer"></div>
+      </section>
+
+      <section id="trash" class="section hidden">
+        <h3>Trash</h3>
+        <div id="trashContainer"></div>
+      </section>
+    </main>
   </div>
-
-  <!-- Reminder Modal -->
-  <div id="reminderModal" class="modal">
-    <div class="modal-content">
-      <h3>Add Reminder</h3>
-      <textarea id="reminderText" placeholder="Reminder text"></textarea>
-      <button id="saveReminder">Save</button>
-    </div>
-  </div>
+  <script src="script.js"></script>
 </body>
 </html>

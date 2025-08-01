@@ -1,192 +1,154 @@
-/* Reset and Layout */
-body, html {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
   font-family: 'Segoe UI', sans-serif;
-  background: #f4f5f7;
+  height: 100%;
+  background: #f2f3f7;
+}
+
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 240px;
+  background: #e3f2fd;
+  height: 100vh;
+  padding: 20px;
+  position: relative;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.nav {
+  margin-top: 30px;
+  list-style: none;
+}
+
+.nav li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.nav li.active,
+.nav li:hover {
+  background: #bbdefb;
+  font-weight: bold;
+}
+
+.status-circles {
+  margin: 10px 0;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.status-circles .circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.green { background: lightgreen; }
+.blue { background: skyblue; }
+.red { background: lightcoral; }
+
+main {
+  flex-grow: 1;
+  padding: 20px;
+  background: #fff;
 }
 
 header {
-  background: #dbeafe;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  background: #e3f2fd;
   padding: 10px 20px;
-  align-items: center;
+  border-radius: 10px;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-left img {
-  height: 30px;
-  margin-right: 10px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-#searchInput {
-  padding: 5px;
+header input {
+  padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-.account-icon {
+.user-icon {
   cursor: pointer;
+  position: relative;
 }
 
-.account-menu {
-  display: none;
+.user-menu {
   position: absolute;
   right: 20px;
   top: 60px;
   background: white;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  border: 1px solid #ccc;
   padding: 10px;
   border-radius: 5px;
+  z-index: 10;
 }
 
-.account-menu button {
-  display: block;
-  margin: 5px 0;
-  width: 100%;
+.user-menu.hidden {
+  display: none;
 }
 
-/* Sidebar */
-aside {
-  background: #e0f2fe;
-  width: 200px;
-  padding: 10px;
-  position: fixed;
-  top: 60px;
-  bottom: 0;
-  left: 0;
+.section {
+  margin-top: 20px;
 }
 
-aside ul {
-  list-style: none;
-  padding: 0;
-}
-
-aside ul li {
-  margin: 10px 0;
-  cursor: pointer;
-}
-
-.status-circles {
+.folder-container,
+.note-container,
+#archiveContainer,
+#trashContainer {
   display: flex;
-  gap: 5px;
-  margin: 10px 0;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
 }
 
-.status-circles span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.green { background: lightgreen; }
-.blue { background: lightblue; }
-.red { background: lightcoral; }
-
-/* Main Content */
-main {
-  margin-left: 220px;
-  padding: 20px;
-}
-
-/* Cards */
-.folder-card, .note-card {
-  background: #fff;
-  border-radius: 10px;
+.folder-card,
+.note-card {
   padding: 15px;
-  margin: 10px;
-  display: inline-block;
-  width: 200px;
+  border-radius: 10px;
+  background: #f0f0f0;
+  min-width: 160px;
+  max-width: 200px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   position: relative;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-.card-menu {
+.folder-card .menu,
+.note-card .menu {
   position: absolute;
   top: 10px;
   right: 10px;
   cursor: pointer;
 }
 
-.menu-options {
+.hidden {
   display: none;
-  position: absolute;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  z-index: 100;
 }
 
-.menu-options div {
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-/* Calendar */
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-top: 10px;
-}
-
-.calendar-day, .calendar-cell {
-  text-align: center;
+textarea, input {
+  width: 100%;
+  margin: 10px 0;
   padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-}
-
-.calendar-day {
-  font-weight: bold;
-  background: #e2e8f0;
-}
-
-.calendar-cell {
-  background: #fff;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.reminder-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: red;
-  border-radius: 50%;
-  margin-top: 4px;
-}
-
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.4);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
 }
