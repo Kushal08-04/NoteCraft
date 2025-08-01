@@ -1,142 +1,173 @@
+const state = {
+  notes: [],
+  reminders: [],
+  currentView: 'dashboard'
+};
+
+// Init
 document.addEventListener("DOMContentLoaded", () => {
-  const sections = document.querySelectorAll(".section");
-  const navItems = document.querySelectorAll(".nav li");
-  const userIcon = document.getElementById("userIcon");
-  const userMenu = document.getElementById("userMenu");
+  setupEventListeners();
+  loadNotes();
+  loadCalendar();
+  loadReminders();
+});
 
-  const folderContainer = document.getElementById("folderContainer");
-  const noteContainer = document.getElementById("noteContainer");
-
-  const archiveContainer = document.getElementById("archiveContainer");
-  const trashContainer = document.getElementById("trashContainer");
-
-  const randomColors = ["#e3f2fd", "#ffe0b2", "#f8bbd0", "#dcedc8", "#d1c4e9"];
-
-  function showSection(sectionId) {
-    sections.forEach(sec => sec.classList.add("hidden"));
-    document.getElementById(sectionId).classList.remove("hidden");
-
-    navItems.forEach(item => item.classList.remove("active"));
-    document.querySelector(`.nav li[data-section="${sectionId}"]`)?.classList.add("active");
-  }
-
-  navItems.forEach(item => {
-    item.addEventListener("click", () => {
-      showSection(item.dataset.section);
-    });
-  });
-
-  userIcon.addEventListener("click", () => {
-    userMenu.classList.toggle("hidden");
-  });
-
-  window.addEventListener("click", (e) => {
-    if (!userIcon.contains(e.target) && !userMenu.contains(e.target)) {
-      userMenu.classList.add("hidden");
+function setupEventListeners() {
+  document.getElementById("dashboardBtn").onclick = showDashboard;
+  document.getElementById("addNewBtn").onclick = () => showSection("addNewSection");
+  document.getElementById("calendarBtn").onclick = () => showSection("calendarSection");
+  document.getElementById("archiveBtn").onclick = () => showSection("archiveSection");
+  document.getElementById("trashBtn").onclick = () => showSection("trashSection");
+  document.getElementById("saveNoteBtn").onclick = saveNote;
+  document.getElementById("searchInput").addEventListener("input", handleSearch);
+  document.getElementById("accountIcon").onclick = toggleAccountMenu;
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest('.account-menu')) {
+      document.getElementById("accountPopup").classList.add("hidden");
     }
   });
+}
 
-  function loadFromStorage() {
-    return JSON.parse(localStorage.getItem("notesData") || "[]");
-  }
-
-  function saveToStorage(data) {
-    localStorage.setItem("notesData", JSON.stringify(data));
-  }
-
-  function render() {
-    const notes = loadFromStorage();
-
-    folderContainer.innerHTML = "";
-    noteContainer.innerHTML = "";
-    archiveContainer.innerHTML = "";
-    trashContainer.innerHTML = "";
-
-    notes.forEach(note => {
-      const card = document.createElement("div");
-      card.className = note.type === "folder" ? "folder-card" : "note-card";
-      card.style.background = randomColors[Math.floor(Math.random() * randomColors.length)];
-      card.innerHTML = `
-        <strong>${note.title}</strong><br/>
-        <small>${note.folder}</small><br/>
-        <p>${note.content}</p>
-        <div class="menu">⋮</div>
-      `;
-
-      const menu = document.createElement("div");
-      menu.className = "menu-options hidden";
-
-      const restoreBtn = document.createElement("button");
-      restoreBtn.textContent = "Restore";
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      const archiveBtn = document.createElement("button");
-      archiveBtn.textContent = "Archive";
-
-      card.querySelector(".menu").addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-      });
-
-      if (note.status === "active") {
-        menu.appendChild(deleteBtn);
-        menu.appendChild(archiveBtn);
-      } else if (note.status === "trash") {
-        menu.appendChild(restoreBtn);
-      }
-
-      card.appendChild(menu);
-
-      if (note.status === "active") {
-        if (note.type === "folder") folderContainer.appendChild(card);
-        else noteContainer.appendChild(card);
-      } else if (note.status === "archive") {
-        archiveContainer.appendChild(card);
-      } else if (note.status === "trash") {
-        trashContainer.appendChild(card);
-      }
-
-      deleteBtn.onclick = () => {
-        note.status = "trash";
-        saveToStorage(notes);
-        render();
-      };
-
-      archiveBtn.onclick = () => {
-        note.status = "archive";
-        saveToStorage(notes);
-        render();
-      };
-
-      restoreBtn.onclick = () => {
-        note.status = "active";
-        saveToStorage(notes);
-        render();
-      };
-    });
-  }
-
-  document.getElementById("saveNote").addEventListener("click", () => {
-    const title = document.getElementById("noteTitle").value;
-    const folder = document.getElementById("noteFolder").value;
-    const content = document.getElementById("noteContent").value;
-
-    if (!title || !content) return alert("Title and content required");
-
-    const notes = loadFromStorage();
-
-    notes.push({
-      id: Date.now(),
-      title,
-      folder,
-      content,
-      status: "active",
-      type: "note"
-    });
-
-    saveToStorage(notes);
-    render();
-    showSection("dashboard");
+function showSection(id) {
+  ["dashboardSection", "addNewSection", "calendarSection", "archiveSection", "trashSection"].forEach(sec => {
+    document.getElementById(sec).classList.add("hidden");
   });
+  document.getElementById(id).classList.remove("hidden");
+  state.currentView = id;
+}
 
-  render();
-});
+function toggleAccountMenu() {
+  const popup = document.getElementById("accountPopup");
+  popup.classList.toggle("hidden");
+}
+
+function saveNote() {
+  const title = document.getElementById("noteTitle").value;
+  const folder = document.getElementById("folderName").value;
+  const content = document.getElementById("noteContent").value;
+  if (!title && !content) return;
+
+  const note = {
+    id: Date.now(),
+    title,
+    folder,
+    content,
+    status: "active",
+    date: new Date().toLocaleDateString()
+  };
+
+  state.notes.push(note);
+  localStorage.setItem("notes", JSON.stringify(state.notes));
+  loadNotes();
+  showDashboard();
+}
+
+function loadNotes() {
+  state.notes = JSON.parse(localStorage.getItem("notes")) || [];
+  const foldersEl = document.getElementById("recentFolders");
+  const notesEl = document.getElementById("myNotes");
+  const archived = document.getElementById("archivedItems");
+  const trashed = document.getElementById("trashedItems");
+
+  foldersEl.innerHTML = "";
+  notesEl.innerHTML = "";
+  archived.innerHTML = "";
+  trashed.innerHTML = "";
+
+  const folderSet = new Set();
+
+  state.notes.forEach(note => {
+    const el = document.createElement("div");
+    el.className = "note-card";
+    el.innerHTML = `<strong>${note.title}</strong><br>${note.content}<div class="note-options">⋮</div>`;
+    const menu = document.createElement("div");
+    menu.className = "note-menu hidden";
+
+    if (note.status === "active") {
+      menu.innerHTML = `<button onclick="archiveNote(${note.id})">Archive</button><button onclick="trashNote(${note.id})">Trash</button>`;
+      if (note.folder) {
+        if (!folderSet.has(note.folder)) {
+          foldersEl.appendChild(el.cloneNode(true));
+          folderSet.add(note.folder);
+        }
+      } else {
+        notesEl.appendChild(el);
+      }
+    } else if (note.status === "archived") {
+      menu.innerHTML = `<button onclick="unarchiveNote(${note.id})">Unarchive</button>`;
+      archived.appendChild(el);
+    } else if (note.status === "trashed") {
+      menu.innerHTML = `<button onclick="deleteNote(${note.id})">Delete</button><button onclick="restoreNote(${note.id})">Restore</button>`;
+      trashed.appendChild(el);
+    }
+  });
+}
+
+function archiveNote(id) {
+  updateNoteStatus(id, "archived");
+}
+function trashNote(id) {
+  updateNoteStatus(id, "trashed");
+}
+function restoreNote(id) {
+  updateNoteStatus(id, "active");
+}
+function deleteNote(id) {
+  state.notes = state.notes.filter(n => n.id !== id);
+  localStorage.setItem("notes", JSON.stringify(state.notes));
+  loadNotes();
+}
+function unarchiveNote(id) {
+  updateNoteStatus(id, "active");
+}
+function updateNoteStatus(id, status) {
+  const note = state.notes.find(n => n.id === id);
+  if (note) note.status = status;
+  localStorage.setItem("notes", JSON.stringify(state.notes));
+  loadNotes();
+}
+
+function handleSearch(e) {
+  const query = e.target.value.toLowerCase();
+  const allCards = document.querySelectorAll(".note-card");
+  allCards.forEach(card => {
+    card.style.display = card.textContent.toLowerCase().includes(query) ? "block" : "none";
+  });
+}
+
+function loadCalendar() {
+  const container = document.getElementById("calendarContainer");
+  container.innerHTML = "";
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  days.forEach(d => container.innerHTML += `<div><strong>${d}</strong></div>`);
+
+  const date = new Date();
+  const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+  const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const firstDay = monthStart.getDay();
+  const daysInMonth = monthEnd.getDate();
+
+  for (let i = 0; i < firstDay; i++) container.innerHTML += `<div></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement("div");
+    cell.className = "calendar-day";
+    cell.textContent = d;
+    cell.onclick = () => {
+      const reminder = prompt("Add reminder for " + d);
+      if (reminder) {
+        state.reminders.push({ day: d, text: reminder });
+        localStorage.setItem("reminders", JSON.stringify(state.reminders));
+        alert("Reminder saved!");
+      }
+    };
+    container.appendChild(cell);
+  }
+}
+
+function loadReminders() {
+  state.reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+}
+
+function showDashboard() {
+  showSection("dashboardSection");
+}

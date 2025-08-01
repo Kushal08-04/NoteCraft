@@ -5,70 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NOTE CRAFT</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="https://i.ibb.co/TMmNJJ0L/download-4.jpg" />
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <div class="logo-section">
-        <img src="https://i.ibb.co/zWL8Yc1/note-icon.png" class="logo" />
-        <h1>NOTE CRAFT</h1>
-        <button class="toggle-btn">&#9776;</button>
+  <header>
+    <div class="logo-title">
+      <img src="https://i.ibb.co/TMmNJJ0L/download-4.jpg" alt="NOTE CRAFT" class="app-icon" />
+      <span>NOTE CRAFT</span>
+    </div>
+    <div class="search-wrapper">
+      <input type="text" id="searchInput" placeholder="Search notes or folders..." />
+    </div>
+    <div class="account-menu">
+      <img src="https://i.ibb.co/PGv8ZzG/user.png" alt="User" id="accountIcon" />
+      <div class="account-popup hidden" id="accountPopup">
+        <button id="loginBtn">Login</button>
+        <button id="logoutBtn">Logout</button>
       </div>
-      <ul class="nav">
-        <li data-section="dashboard" class="active">🏠 Dashboard</li>
-        <li data-section="addNew">➕ Add New</li>
-        <div class="status-circles">
-          <span class="circle green"></span>
-          <span class="circle blue"></span>
-          <span class="circle red"></span>
-        </div>
-        <li data-section="calendar">📅 Calendar</li>
-        <li data-section="archive">🗂️ Archive</li>
-        <li data-section="trash">🗑️ Trash</li>
+    </div>
+  </header>
+
+  <aside>
+    <nav>
+      <ul>
+        <li id="dashboardBtn">Dashboard</li>
+        <li id="addNewBtn">Add New</li>
+        <li><span class="status green"></span><span class="status blue"></span><span class="status red"></span></li>
+        <li id="calendarBtn">Calendar</li>
+        <li id="archiveBtn">Archive</li>
+        <li id="trashBtn">Trash</li>
       </ul>
-    </aside>
+    </nav>
+  </aside>
 
-    <main>
-      <header>
-        <h2>MY NOTES</h2>
-        <input type="text" id="search" placeholder="Search..." />
-        <div class="user-icon" id="userIcon">👤</div>
-        <div id="userMenu" class="user-menu hidden">
-          <button id="loginBtn">Login</button>
-          <button id="logoutBtn">Logout</button>
-        </div>
-      </header>
+  <main>
+    <section id="addNewSection" class="hidden">
+      <input type="text" id="noteTitle" placeholder="Note Title" />
+      <input type="text" id="folderName" placeholder="Folder Name (optional)" />
+      <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+      <button id="saveNoteBtn">Save</button>
+    </section>
 
-      <section id="dashboard" class="section">
-        <h3>Recent Folders</h3>
-        <div class="folder-container" id="folderContainer"></div>
-        <h3>My Notes</h3>
-        <div class="note-container" id="noteContainer"></div>
-      </section>
+    <section id="dashboardSection">
+      <h2>MY NOTES</h2>
+      <div id="recentFolders"></div>
+      <div id="myNotes"></div>
+    </section>
 
-      <section id="addNew" class="section hidden">
-        <h3>Add New Note</h3>
-        <input type="text" id="noteTitle" placeholder="Note Title" />
-        <input type="text" id="noteFolder" placeholder="Folder Name" />
-        <textarea id="noteContent" placeholder="Write your note..."></textarea>
-        <button id="saveNote">Save</button>
-      </section>
+    <section id="calendarSection" class="hidden">
+      <h2>Calendar</h2>
+      <div id="calendarContainer"></div>
+    </section>
 
-      <section id="calendar" class="section hidden">
-        <h3>Calendar (Coming Soon)</h3>
-      </section>
+    <section id="archiveSection" class="hidden">
+      <h2>Archived</h2>
+      <div id="archivedItems"></div>
+    </section>
 
-      <section id="archive" class="section hidden">
-        <h3>Archived Notes</h3>
-        <div id="archiveContainer"></div>
-      </section>
+    <section id="trashSection" class="hidden">
+      <h2>Trash</h2>
+      <div id="trashedItems"></div>
+    </section>
+  </main>
 
-      <section id="trash" class="section hidden">
-        <h3>Trash</h3>
-        <div id="trashContainer"></div>
-      </section>
-    </main>
-  </div>
   <script src="script.js"></script>
 </body>
 </html>

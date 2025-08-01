@@ -66,22 +66,35 @@ const REMINDERS_FILE = path.join(__dirname, 'reminders.json');
 app.get('/api/notes', (req, res) => {
   if (!fs.existsSync(NOTES_FILE)) return res.json([]);
   const data = fs.readFileSync(NOTES_FILE);
-  res.json(JSON.parse(data));
+  const allNotes = JSON.parse(data);
+  const userNotes = allNotes.filter(note => note.user === req.user.email); // ✅ filter by user
+  res.json(userNotes);
 });
+
 
 // Get reminders
 app.get('/api/reminders', (req, res) => {
   if (!fs.existsSync(REMINDERS_FILE)) return res.json([]);
   const data = fs.readFileSync(REMINDERS_FILE);
-  res.json(JSON.parse(data));
+  const allReminders = JSON.parse(data);
+  const userReminders = allReminders.filter(r => r.user === req.user.email); // ✅ filter by user
+  res.json(userReminders);
 });
+
 
 // Add reminder
 app.post('/api/reminders', (req, res) => {
+  const { title, description, date } = req.body;
+
+  if (!title || !date) {
+    return res.status(400).json({ error: 'Title and date are required' });
+  }
   const newReminder = {
     id: uuidv4(),
     user: req.user.email, // User-specific reminders
-    ...req.body
+    title,
+    description,
+    date
   };
 
   let reminders = [];
@@ -106,7 +119,12 @@ app.delete('/api/reminders/:id', (req, res) => {
 
 // Save note
 app.post('/api/notes', (req, res) => {
-  const newNote = { id: uuidv4(), ...req.body };
+  const newNote = { id: uuidv4(),
+    user: req.user.email,
+     title,
+    content,
+    folder: folder || null,
+    dateCreated: dateCreated || new Date().toISOString() };
   let notes = [];
   if (fs.existsSync(NOTES_FILE)) {
     notes = JSON.parse(fs.readFileSync(NOTES_FILE));

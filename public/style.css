@@ -1,154 +1,134 @@
-* {
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body, html {
-  font-family: 'Segoe UI', sans-serif;
-  height: 100%;
-  background: #f2f3f7;
-}
-
-.container {
-  display: flex;
-}
-
-.sidebar {
-  width: 240px;
-  background: #e3f2fd;
-  height: 100vh;
-  padding: 20px;
-  position: relative;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  width: 32px;
-  height: 32px;
-}
-
-.nav {
-  margin-top: 30px;
-  list-style: none;
-}
-
-.nav li {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.nav li.active,
-.nav li:hover {
-  background: #bbdefb;
-  font-weight: bold;
-}
-
-.status-circles {
-  margin: 10px 0;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.status-circles .circle {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.green { background: lightgreen; }
-.blue { background: skyblue; }
-.red { background: lightcoral; }
-
-main {
-  flex-grow: 1;
-  padding: 20px;
-  background: #fff;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
 }
 
 header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: #e3f2fd;
+  background: #fff;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-bottom: 1px solid #ddd;
+  justify-content: space-between;
 }
 
-header input {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.user-icon {
-  cursor: pointer;
-  position: relative;
-}
-
-.user-menu {
-  position: absolute;
-  right: 20px;
-  top: 60px;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 10;
-}
-
-.user-menu.hidden {
-  display: none;
-}
-
-.section {
-  margin-top: 20px;
-}
-
-.folder-container,
-.note-container,
-#archiveContainer,
-#trashContainer {
+.logo-title {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 10px;
+  align-items: center;
+  gap: 10px;
 }
 
-.folder-card,
-.note-card {
-  padding: 15px;
-  border-radius: 10px;
-  background: #f0f0f0;
-  min-width: 160px;
-  max-width: 200px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+.logo-title .app-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.search-wrapper input {
+  width: 300px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.account-menu {
   position: relative;
 }
 
-.folder-card .menu,
-.note-card .menu {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.account-menu img {
+  width: 32px;
   cursor: pointer;
+}
+
+.account-popup {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .hidden {
   display: none;
 }
 
-textarea, input {
-  width: 100%;
+aside {
+  width: 200px;
+  background: #f0f0f0;
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  padding: 20px 0;
+}
+
+aside nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+aside nav ul li {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.status {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+
+.green { background: #a4f5c2; }
+.blue { background: #a4d4f5; }
+.red { background: #f5a4a4; }
+
+main {
+  margin-left: 220px;
+  padding: 20px;
+}
+
+#addNewSection input,
+#addNewSection textarea {
+  display: block;
   margin: 10px 0;
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+}
+
+#calendarContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.calendar-day {
+  background: #fff;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.note-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  position: relative;
+}
+
+.note-options {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
 }
