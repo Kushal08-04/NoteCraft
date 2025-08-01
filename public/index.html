@@ -8,66 +8,45 @@
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
-      <div class="logo">📝 NOTE CRAFT</div>
-      <button id="addNoteBtn" class="sidebar-btn">➕ Add New</button>
-      <div class="status-circles">
-        <span class="circle green"></span>
-        <span class="circle blue"></span>
-        <span class="circle red"></span>
+    <header>
+      <div class="app-title">📝 NOTE CRAFT</div>
+      <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Search notes..." />
       </div>
-      <button class="sidebar-btn" id="calendarBtn">📅 Calendar</button>
-      <button class="sidebar-btn" id="archiveBtn">🗃️ Archive</button>
-      <button class="sidebar-btn" id="trashBtn">🗑️ Trash</button>
+      <div class="user-menu">
+        <img src="profile.png" id="profileIcon" alt="User" />
+        <div class="auth-popup" id="authPopup">
+          <button id="loginBtn">Login</button>
+          <button id="logoutBtn" style="display: none;">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <aside>
+      <ul>
+        <li onclick="showAddNoteSection()">➕ Add New</li>
+        <li><span class="dot green"></span></li>
+        <li><span class="dot blue"></span></li>
+        <li><span class="dot red"></span></li>
+        <li onclick="showCalendar()">📅 Calendar</li>
+        <li onclick="showArchive()">📦 Archive</li>
+        <li onclick="showTrash()">🗑️ Trash</li>
+      </ul>
     </aside>
 
-    <main class="main">
-      <header class="header">
-        <div class="header-left">
-          <h2>MY NOTES</h2>
-        </div>
-        <div class="header-right">
-          <input type="text" id="searchBar" placeholder="Search..." />
-          <div id="user-profile">
-            <img src="default-profile.png" alt="Profile" />
-            <button id="loginBtn">Login</button>
-          </div>
-        </div>
-      </header>
-
-      <section class="add-section">
-        <input id="noteTitle" placeholder="Title" />
-        <input id="noteFolder" placeholder="Folder (e.g., Class Notes)" />
+    <main>
+      <section class="add-note-section" id="addNoteSection">
+        <input type="text" id="noteTitle" placeholder="Title" />
+        <input type="text" id="noteFolder" placeholder="Folder (e.g., Class Notes)" />
         <textarea id="noteContent" placeholder="Write your note..."></textarea>
-        <button id="saveBtn">Save</button>
+        <button onclick="saveNote()">Save</button>
       </section>
 
-      <section class="folder-section">
-        <h3>Recent Folders</h3>
-        <div class="tabs">
-          <button class="tab active">Today</button>
-          <button class="tab">This Week</button>
-          <button class="tab">This Month</button>
-        </div>
-        <div id="foldersContainer" class="card-container"></div>
-      </section>
+      <h2>Recent Folders</h2>
+      <div id="foldersContainer" class="grid"></div>
 
-      <section class="note-section">
-        <h3>My Notes</h3>
-        <div class="tabs">
-          <button class="tab active">Today</button>
-          <button class="tab">This Week</button>
-          <button class="tab">This Month</button>
-        </div>
-        <div id="notesContainer" class="card-container"></div>
-      </section>
-
-      <div id="calendarModal" class="modal hidden">
-        <div class="modal-content">
-          <span class="close" onclick="closeCalendar()">&times;</span>
-          <iframe src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FKolkata" style="border: 0" width="100%" height="500" frameborder="0" scrolling="no"></iframe>
-        </div>
-      </div>
+      <h2>My Notes</h2>
+      <div id="notesContainer" class="grid"></div>
     </main>
   </div>
 
