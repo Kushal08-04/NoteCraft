@@ -1,232 +1,213 @@
-let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-let archived = JSON.parse(localStorage.getItem("archive") || "[]");
-let trashed = JSON.parse(localStorage.getItem("trash") || "[]");
-
-const sections = {
-  dashboard: document.getElementById("dashboardView"),
-  add: document.getElementById("addNewView"),
-  calendar: document.getElementById("calendarView"),
-  archive: document.getElementById("archiveView"),
-  trash: document.getElementById("trashView")
-};
-
-// NAVIGATION
-document.querySelectorAll(".nav-item").forEach(item => {
-  item.onclick = () => {
-    Object.values(sections).forEach(sec => sec.classList.add("hidden"));
-    sections[item.dataset.section].classList.remove("hidden");
-    if (item.dataset.section === "calendar") drawCalendar();
-    if (item.dataset.section === "archive") renderArchive();
-    if (item.dataset.section === "trash") renderTrash();
-    if (item.dataset.section === "dashboard") renderDashboard();
-  };
+// --- Toggle Add New Form ---
+document.getElementById('add-new-btn').addEventListener('click', () => {
+  document.getElementById('add-new-form').classList.toggle('hidden');
 });
 
-function saveNote() {
-  const title = document.getElementById("noteTitle").value;
-  const folder = document.getElementById("noteFolder").value;
-  const content = document.getElementById("noteContent").value;
-  if (title && folder && content) {
-    notes.push({ title, folder, content });
-    localStorage.setItem("notes", JSON.stringify(notes));
-    document.getElementById("noteTitle").value = "";
-    document.getElementById("noteFolder").value = "";
-    document.getElementById("noteContent").value = "";
-    renderDashboard();
-    sections.add.classList.add("hidden");
-    sections.dashboard.classList.remove("hidden");
-  }
-}
+// --- Toggle Account Menu ---
+const accountIcon = document.getElementById('account-icon');
+const accountMenu = document.getElementById('account-menu');
 
-function renderDashboard() {
-  const folders = document.getElementById("folders");
-  const notesDiv = document.getElementById("notes");
-  folders.innerHTML = "";
-  notesDiv.innerHTML = "";
-
-  const folderMap = {};
-  notes.forEach(note => {
-    folderMap[note.folder] = folderMap[note.folder] || [];
-    folderMap[note.folder].push(note);
-  });
-
-  Object.keys(folderMap).forEach(folder => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<strong>${folder}</strong><div class="menu">⋮</div>`;
-    addCardMenu(div, note => moveToTrash(note), folder);
-    folders.appendChild(div);
-  });
-
-  notes.forEach(note => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<strong>${note.title}</strong><p>${note.content}</p><div class="menu">⋮</div>`;
-    addCardMenu(div, note => moveToTrash(note), note);
-    notesDiv.appendChild(div);
-  });
-}
-
-function addCardMenu(card, callback, noteData) {
-  const menu = card.querySelector(".menu");
-  const menuBox = document.createElement("div");
-  menuBox.className = "menu-options";
-  menuBox.innerHTML = `
-    <button onclick="archiveNote(${JSON.stringify(noteData).replace(/"/g, "'")})">Archive</button>
-    <button onclick="moveToTrash(${JSON.stringify(noteData).replace(/"/g, "'")})">Trash</button>`;
-  card.appendChild(menuBox);
-  menu.onclick = e => {
-    e.stopPropagation();
-    document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
-    menuBox.classList.toggle("show");
-  };
-  window.addEventListener("click", () => menuBox.classList.remove("show"));
-}
-
-function moveToTrash(note) {
-  trashed.push(note);
-  notes = notes.filter(n => n.title !== note.title);
-  localStorage.setItem("trash", JSON.stringify(trashed));
-  localStorage.setItem("notes", JSON.stringify(notes));
-  renderDashboard();
-}
-
-function archiveNote(note) {
-  archived.push(note);
-  notes = notes.filter(n => n.title !== note.title);
-  localStorage.setItem("archive", JSON.stringify(archived));
-  localStorage.setItem("notes", JSON.stringify(notes));
-  renderDashboard();
-}
-
-function renderTrash() {
-  const trash = document.getElementById("trashNotes");
-  const empty = document.getElementById("emptyTrash");
-  trash.innerHTML = "";
-  empty.classList.toggle("hidden", trashed.length !== 0);
-
-  trashed.forEach(note => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<strong>${note.title}</strong><p>${note.content}</p><div class="menu">⋮</div>`;
-    const menuBox = document.createElement("div");
-    menuBox.className = "menu-options";
-    menuBox.innerHTML = `<button onclick="restoreNote(${JSON.stringify(note).replace(/"/g, "'")})">Restore</button>`;
-    div.appendChild(menuBox);
-    div.querySelector(".menu").onclick = e => {
-      e.stopPropagation();
-      document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
-      menuBox.classList.toggle("show");
-    };
-    trash.appendChild(div);
-  });
-}
-
-function renderArchive() {
-  const arch = document.getElementById("archiveNotes");
-  const empty = document.getElementById("emptyArchive");
-  arch.innerHTML = "";
-  empty.classList.toggle("hidden", archived.length !== 0);
-
-  archived.forEach(note => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<strong>${note.title}</strong><p>${note.content}</p><div class="menu">⋮</div>`;
-    const menuBox = document.createElement("div");
-    menuBox.className = "menu-options";
-    menuBox.innerHTML = `<button onclick="unarchiveNote(${JSON.stringify(note).replace(/"/g, "'")})">Unarchive</button>`;
-    div.appendChild(menuBox);
-    div.querySelector(".menu").onclick = e => {
-      e.stopPropagation();
-      document.querySelectorAll(".menu-options").forEach(m => m.classList.remove("show"));
-      menuBox.classList.toggle("show");
-    };
-    arch.appendChild(div);
-  });
-}
-
-function restoreNote(note) {
-  notes.push(note);
-  trashed = trashed.filter(n => n.title !== note.title);
-  localStorage.setItem("notes", JSON.stringify(notes));
-  localStorage.setItem("trash", JSON.stringify(trashed));
-  renderTrash();
-}
-
-function unarchiveNote(note) {
-  notes.push(note);
-  archived = archived.filter(n => n.title !== note.title);
-  localStorage.setItem("notes", JSON.stringify(notes));
-  localStorage.setItem("archive", JSON.stringify(archived));
-  renderArchive();
-}
-
-// FULL CALENDAR
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-
-function drawCalendar() {
-  const calendar = document.getElementById("calendar");
-  calendar.innerHTML = "";
-
-  const title = document.getElementById("calendarTitle");
-  const firstDay = new Date(currentYear, currentMonth, 1);
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const startDay = firstDay.getDay();
-
-  title.textContent = `${firstDay.toLocaleString("default", { month: "long" })} ${currentYear}`;
-
-  for (let i = 0; i < startDay; i++) {
-    const blank = document.createElement("div");
-    blank.className = "calendar-day blank";
-    calendar.appendChild(blank);
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const day = document.createElement("div");
-    day.className = "calendar-day";
-    day.textContent = d;
-    calendar.appendChild(day);
-  }
-}
-
-document.getElementById("prevMonth").onclick = () => {
-  currentMonth--;
-  if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear--;
-  }
-  drawCalendar();
-};
-
-document.getElementById("nextMonth").onclick = () => {
-  currentMonth++;
-  if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear++;
-  }
-  drawCalendar();
-};
-
-// Account icon dropdown
-const accountIcon = document.querySelector(".account-icon");
-const accountMenu = document.querySelector(".account-menu");
-
-accountIcon.addEventListener("click", e => {
+accountIcon.addEventListener('click', (e) => {
   e.stopPropagation();
-  accountMenu.classList.toggle("hidden");
+  accountMenu.style.display = accountMenu.style.display === 'flex' ? 'none' : 'flex';
 });
 
-window.addEventListener("click", () => {
-  accountMenu.classList.add("hidden");
+document.addEventListener('click', (e) => {
+  if (!accountMenu.contains(e.target) && e.target !== accountIcon) {
+    accountMenu.style.display = 'none';
+  }
 });
 
-document.getElementById("loginBtn").onclick = () => {
-  alert("Login clicked (connect with backend)");
-};
-document.getElementById("logoutBtn").onclick = () => {
-  alert("Logout clicked (connect with backend)");
-};
+// --- Save Note ---
+let notes = JSON.parse(localStorage.getItem('notes')) || [];
 
-// Start
-renderDashboard();
+document.getElementById('save-note-btn').addEventListener('click', () => {
+  const title = document.getElementById('note-title').value.trim();
+  const folder = document.getElementById('note-folder').value.trim();
+  const content = document.getElementById('note-content').value.trim();
+
+  if (!title || !content) return alert("Title and content are required.");
+
+  const note = {
+    id: Date.now(),
+    title,
+    folder,
+    content,
+    date: new Date().toLocaleString()
+  };
+
+  notes.push(note);
+  localStorage.setItem('notes', JSON.stringify(notes));
+  renderNotes();
+  renderFolders();
+  document.getElementById('note-title').value = '';
+  document.getElementById('note-folder').value = '';
+  document.getElementById('note-content').value = '';
+});
+
+// --- Render Notes ---
+function renderNotes() {
+  const container = document.getElementById('note-container');
+  container.innerHTML = '';
+  notes.forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.innerHTML = `
+      <div class="card-options">⋮</div>
+      <div class="options-menu">
+        <button onclick="deleteNote(${note.id})">Move to Trash</button>
+        <button onclick="archiveNote(${note.id})">Archive</button>
+      </div>
+      <h4>${note.title}</h4>
+      <p>${note.content}</p>
+      <small>${note.date}</small>
+    `;
+    addMenuBehavior(card);
+    container.appendChild(card);
+  });
+}
+
+function deleteNote(id) {
+  notes = notes.filter(n => n.id !== id);
+  localStorage.setItem('notes', JSON.stringify(notes));
+  renderNotes();
+}
+
+function archiveNote(id) {
+  alert("Archive feature is pending.");
+}
+
+// --- Render Folders ---
+function renderFolders() {
+  const container = document.getElementById('folder-container');
+  container.innerHTML = '';
+  const folders = {};
+
+  notes.forEach(note => {
+    if (note.folder) {
+      if (!folders[note.folder]) folders[note.folder] = [];
+      folders[note.folder].push(note);
+    }
+  });
+
+  Object.keys(folders).forEach(folder => {
+    const card = document.createElement('div');
+    card.className = 'folder-card';
+    card.innerHTML = `
+      <div class="card-options">⋮</div>
+      <div class="options-menu">
+        <button onclick="moveFolderToTrash('${folder}')">Move to Trash</button>
+        <button onclick="archiveFolder('${folder}')">Archive</button>
+      </div>
+      <h4>${folder}</h4>
+      <p>${folders[folder].length} notes</p>
+    `;
+    addMenuBehavior(card);
+    container.appendChild(card);
+  });
+}
+
+function moveFolderToTrash(folder) {
+  notes = notes.filter(n => n.folder !== folder);
+  localStorage.setItem('notes', JSON.stringify(notes));
+  renderFolders();
+  renderNotes();
+}
+
+function archiveFolder(folder) {
+  alert("Archive feature is pending.");
+}
+
+// --- Menu Behavior ---
+function addMenuBehavior(card) {
+  const btn = card.querySelector('.card-options');
+  const menu = card.querySelector('.options-menu');
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target) && e.target !== btn) {
+      menu.style.display = 'none';
+    }
+  });
+}
+
+// --- Calendar ---
+const calendarGrid = document.getElementById('calendar-grid');
+const monthDisplay = document.getElementById('calendar-month');
+let currentMonth = new Date();
+
+function renderCalendar() {
+  calendarGrid.innerHTML = '';
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const prevDays = new Date(year, month, 0).getDate();
+
+  monthDisplay.textContent = `${currentMonth.toLocaleString('default', { month: 'long' })} ${year}`;
+
+  const days = [];
+
+  // Previous month's trailing days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    days.push({ day: prevDays - i, other: true });
+  }
+
+  // Current month
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push({ day: i, other: false });
+  }
+
+  // Fill rest
+  while (days.length % 7 !== 0) {
+    days.push({ day: days.length, other: true });
+  }
+
+  days.forEach((obj, i) => {
+    const div = document.createElement('div');
+    div.className = 'calendar-day';
+    if (obj.other) div.classList.add('other-month');
+
+    const dateKey = `${year}-${month}-${obj.day}`;
+    const reminder = localStorage.getItem(`reminder-${dateKey}`);
+    div.innerHTML = `<strong>${obj.day}</strong>${reminder ? `<p>${reminder}</p>` : ''}`;
+
+    div.addEventListener('click', () => {
+      if (!obj.other) {
+        document.getElementById('reminder-form').classList.remove('hidden');
+        document.getElementById('reminder-text').dataset.date = dateKey;
+        document.getElementById('reminder-text').value = reminder || '';
+      }
+    });
+
+    calendarGrid.appendChild(div);
+  });
+}
+
+document.getElementById('prev-month').addEventListener('click', () => {
+  currentMonth.setMonth(currentMonth.getMonth() - 1);
+  renderCalendar();
+});
+
+document.getElementById('next-month').addEventListener('click', () => {
+  currentMonth.setMonth(currentMonth.getMonth() + 1);
+  renderCalendar();
+});
+
+document.getElementById('save-reminder').addEventListener('click', () => {
+  const input = document.getElementById('reminder-text');
+  const dateKey = input.dataset.date;
+  localStorage.setItem(`reminder-${dateKey}`, input.value.trim());
+  input.value = '';
+  document.getElementById('reminder-form').classList.add('hidden');
+  renderCalendar();
+});
+
+// Initial load
+renderNotes();
+renderFolders();
+renderCalendar();

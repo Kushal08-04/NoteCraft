@@ -2,92 +2,50 @@ body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background: #f9fafb;
-  color: #333;
 }
 
-header {
+.app {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #e0f2fe;
-  padding: 10px 20px;
-  border-bottom: 1px solid #ccc;
+}
+
+.sidebar {
+  width: 220px;
+  background: #e0f2ff;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .logo {
   font-weight: bold;
-  font-size: 1.2em;
-}
-
-.header-right {
+  font-size: 18px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.search-bar {
-  padding: 5px 10px;
-  border-radius: 4px;
-  border: 1px solid #aaa;
-}
-
-.account-icon {
-  position: relative;
-  cursor: pointer;
-}
-
-.account-menu {
-  position: absolute;
-  top: 25px;
-  right: 0;
-  background: #fff;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  z-index: 10;
-}
-
-.account-menu button {
-  background: #e0f2fe;
-  border: none;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.container {
-  display: flex;
-}
-
-aside {
-  width: 200px;
-  background: #f0f9ff;
-  padding: 15px;
-  border-right: 1px solid #ccc;
-}
-
-.nav-item {
-  padding: 10px;
-  margin: 5px 0;
+.sidebar-btn {
   background: #dbeafe;
-  border-radius: 6px;
+  border: none;
+  padding: 10px;
+  text-align: left;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.nav-item:hover {
-  background: #bfdbfe;
+.sidebar-btn:hover {
+  background: #c7d2fe;
 }
 
-.status-lights {
-  margin: 10px 0;
+.status-circles {
   display: flex;
-  gap: 8px;
-  justify-content: center;
+  gap: 5px;
+  padding: 0 10px;
 }
 
-.status-lights .light {
+.circle {
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -97,109 +55,160 @@ aside {
 .blue { background: lightblue; }
 .red { background: lightcoral; }
 
-main {
-  flex: 1;
-  padding: 20px;
+.main-content {
+  flex-grow: 1;
+  padding: 0;
 }
 
-section {
+.header {
+  background: #dbeafe;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  position: relative;
+}
+
+.header-left .title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-center {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.search-bar {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  width: 300px;
+}
+
+.header-right {
+  position: relative;
+}
+
+.account-icon {
+  cursor: pointer;
+}
+
+.account-menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+}
+
+.account-menu button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-menu button:hover {
+  background: #f0f0f0;
+}
+
+.add-new-form {
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 .hidden {
   display: none;
 }
 
-input, textarea {
-  padding: 8px;
-  width: 100%;
-  max-width: 400px;
-  border-radius: 4px;
-  border: 1px solid #aaa;
-}
-
-button {
-  padding: 8px 15px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: fit-content;
-}
-
-.card-grid {
+.folders, .notes {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 15px;
+  padding: 20px;
 }
 
-.card {
+.folder-card, .note-card {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 15px;
-  min-width: 150px;
-  max-width: 200px;
+  width: 180px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   position: relative;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-.card .menu {
+.card-options {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 5px;
   cursor: pointer;
 }
 
-.menu-options {
+.options-menu {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   display: none;
-  position: absolute;
-  top: 30px;
-  right: 10px;
-  background: #fff;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  padding: 5px;
-  z-index: 5;
+  z-index: 10;
 }
 
-.menu-options.show {
-  display: flex;
-  flex-direction: column;
-}
-
-.menu-options button {
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 5px;
+.options-menu button {
+  display: block;
   width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: white;
   cursor: pointer;
+  text-align: left;
+}
+
+.options-menu button:hover {
+  background: #f2f2f2;
+}
+
+/* Calendar */
+.calendar-section {
+  padding: 20px;
 }
 
 .calendar-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
   margin-top: 10px;
+  gap: 5px;
 }
 
 .calendar-day {
-  background: #e5e7eb;
-  text-align: center;
+  border: 1px solid #ccc;
   padding: 10px;
-  border-radius: 6px;
+  min-height: 60px;
+  border-radius: 4px;
+  position: relative;
 }
 
-.blank {
-  visibility: hidden;
+.calendar-day.other-month {
+  background: #f0f0f0;
+  color: #888;
+}
+
+.calendar-day:hover {
+  background: #e0f7ff;
+  cursor: pointer;
 }

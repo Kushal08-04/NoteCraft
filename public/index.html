@@ -7,74 +7,70 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">📝 NOTE CRAFT</div>
-    <div class="header-right">
-      <h2>MY NOTES</h2>
-      <input type="text" placeholder="Search..." class="search-bar"/>
-      <div class="account-icon">👤
-        <div class="account-menu hidden">
-          <button id="loginBtn">Login</button>
-          <button id="logoutBtn">Logout</button>
-        </div>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo"><img src="icon.png" alt="icon"> NOTE CRAFT</div>
+      <button class="sidebar-btn active">📋 Dashboard</button>
+      <button class="sidebar-btn" id="add-new-btn">➕ Add New</button>
+      <div class="status-circles">
+        <span class="circle green"></span>
+        <span class="circle blue"></span>
+        <span class="circle red"></span>
       </div>
-    </div>
-  </header>
-
-  <div class="container">
-    <aside>
-      <div class="nav-item" data-section="dashboard">📋 Dashboard</div>
-      <div class="nav-item" data-section="add">➕ Add New</div>
-      <div class="status-lights">
-        <span class="light green"></span>
-        <span class="light blue"></span>
-        <span class="light red"></span>
-      </div>
-      <div class="nav-item" data-section="calendar">📅 Calendar</div>
-      <div class="nav-item" data-section="archive">🗂️ Archive</div>
-      <div class="nav-item" data-section="trash">🗑️ Trash</div>
+      <button class="sidebar-btn">📅 Calendar</button>
+      <button class="sidebar-btn">📁 Archive</button>
+      <button class="sidebar-btn">🗑️ Trash</button>
     </aside>
 
-    <main>
-      <!-- Dashboard -->
-      <section id="dashboardView">
-        <h3>My Folders</h3>
-        <div id="folders" class="card-grid"></div>
-        <h3>My Notes</h3>
-        <div id="notes" class="card-grid"></div>
-      </section>
+    <!-- Main -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <h1 class="title">MY NOTES</h1>
+        </div>
+        <div class="header-center">
+          <input type="text" class="search-bar" placeholder="Search...">
+        </div>
+        <div class="header-right">
+          <div class="account-icon" id="account-icon">👤</div>
+          <div class="account-menu" id="account-menu">
+            <button id="login-btn">Login</button>
+            <button id="logout-btn">Logout</button>
+          </div>
+        </div>
+      </header>
 
-      <!-- Add New -->
-      <section id="addNewView" class="hidden">
-        <h3>Add New Note</h3>
-        <input type="text" id="noteTitle" placeholder="Title" />
-        <input type="text" id="noteFolder" placeholder="Folder" />
-        <textarea id="noteContent" placeholder="Your note..."></textarea>
-        <button onclick="saveNote()">Save</button>
+      <!-- Add New Form -->
+      <div class="add-new-form hidden" id="add-new-form">
+        <input type="text" placeholder="Title" id="note-title">
+        <input type="text" placeholder="Folder (optional)" id="note-folder">
+        <textarea placeholder="Write your note..." id="note-content"></textarea>
+        <button id="save-note-btn">Save</button>
+      </div>
+
+      <!-- Content Section -->
+      <section>
+        <h2>My Folders</h2>
+        <div class="folders" id="folder-container"></div>
+
+        <h2>My Notes</h2>
+        <div class="notes" id="note-container"></div>
       </section>
 
       <!-- Calendar -->
-      <section id="calendarView" class="hidden">
+      <section class="calendar-section hidden" id="calendar-section">
         <div class="calendar-header">
-          <button id="prevMonth">◀</button>
-          <h3 id="calendarTitle"></h3>
-          <button id="nextMonth">▶</button>
+          <button id="prev-month">⬅️</button>
+          <h3 id="calendar-month"></h3>
+          <button id="next-month">➡️</button>
         </div>
-        <div id="calendar" class="calendar-grid"></div>
-      </section>
-
-      <!-- Archive -->
-      <section id="archiveView" class="hidden">
-        <h3>Archived Notes</h3>
-        <p id="emptyArchive">Nothing in Archive</p>
-        <div id="archiveNotes" class="card-grid"></div>
-      </section>
-
-      <!-- Trash -->
-      <section id="trashView" class="hidden">
-        <h3>Trash</h3>
-        <p id="emptyTrash">Nothing in Trash</p>
-        <div id="trashNotes" class="card-grid"></div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+        <div id="reminder-form" class="hidden">
+          <input type="text" id="reminder-text" placeholder="Reminder">
+          <button id="save-reminder">Save Reminder</button>
+        </div>
       </section>
     </main>
   </div>
