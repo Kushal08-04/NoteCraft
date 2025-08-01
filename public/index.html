@@ -7,44 +7,65 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-container">
+  <div class="app">
     <aside class="sidebar">
-      <div class="logo">📝 NOTE CRAFT</div>
-      <button id="addNewBtn">➕ Add New</button>
-      <div class="status-dots">
-        <span class="dot green"></span>
-        <span class="dot blue"></span>
-        <span class="dot red"></span>
-      </div>
-      <button class="nav-btn" onclick="showCalendar()">📅 Calendar</button>
-      <button class="nav-btn" onclick="showArchive()">📦 Archive</button>
-      <button class="nav-btn" onclick="showTrash()">🗑️ Trash</button>
+      <h2 class="logo">📝 NOTE CRAFT</h2>
+      <ul>
+        <li onclick="showSection('dashboard')">🏠 Dashboard</li>
+        <li onclick="toggleAddNew()">➕ Add New</li>
+        <li><div class="status-dots">
+          <span class="dot green"></span>
+          <span class="dot blue"></span>
+          <span class="dot red"></span>
+        </div></li>
+        <li onclick="showSection('calendar')">📅 Calendar</li>
+        <li onclick="showSection('archive')">🗄️ Archive</li>
+        <li onclick="showSection('trash')">🗑️ Trash</li>
+      </ul>
     </aside>
 
-    <main class="main-content">
-      <header>
-        <h2>MY NOTES</h2>
-        <input type="text" id="searchBar" placeholder="Search notes..."/>
-        <div class="account-icon" onclick="toggleAccountMenu()">👤</div>
-        <div id="accountMenu" class="account-menu hidden">
-          <button id="loginBtn">Login</button>
-          <button id="logoutBtn" class="hidden">Logout</button>
+    <main class="main">
+      <header class="top-bar">
+        <div class="search-container">
+          <input type="text" placeholder="Search..." id="searchBar" oninput="searchNotes()"/>
+        </div>
+        <div class="account-container" onclick="toggleAccountMenu(event)">
+          <img src="profile.png" alt="Account" class="account-icon" />
+          <div class="account-menu" id="accountMenu">
+            <button onclick="login()">Login</button>
+            <button onclick="logout()">Logout</button>
+          </div>
         </div>
       </header>
 
-      <section id="addNoteSection" class="note-form hidden">
+      <div class="add-new-form" id="addNewForm">
         <input type="text" id="noteTitle" placeholder="Title" />
-        <input type="text" id="noteFolder" placeholder="Folder (e.g., Class Notes)" />
+        <input type="text" id="noteFolder" placeholder="Folder (e.g. Class Notes)" />
         <textarea id="noteContent" placeholder="Write your note..."></textarea>
         <button onclick="saveNote()">Save</button>
+      </div>
+
+      <section id="dashboardView">
+        <h2>Recent Folders</h2>
+        <div id="recentFolders" class="folder-container"></div>
+
+        <h2>My Notes</h2>
+        <div id="myNotes" class="note-container"></div>
       </section>
 
-      <section id="contentArea">
-        <h3>Recent Folders</h3>
-        <div id="folderContainer" class="card-container"></div>
+      <section id="calendarView" style="display: none;">
+        <h2>Calendar</h2>
+        <div id="calendarContainer"></div>
+      </section>
 
-        <h3>My Notes</h3>
-        <div id="noteContainer" class="card-container"></div>
+      <section id="archiveView" style="display: none;">
+        <h2>Archived Notes</h2>
+        <div id="archivedNotes" class="note-container"></div>
+      </section>
+
+      <section id="trashView" style="display: none;">
+        <h2>Trash</h2>
+        <div id="trashedNotes" class="note-container"></div>
       </section>
     </main>
   </div>

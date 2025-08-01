@@ -4,111 +4,113 @@ body {
   background: #f6f7fb;
 }
 
-.app-container {
+.app {
   display: flex;
 }
 
 .sidebar {
   width: 220px;
   background: #fff;
+  border-right: 1px solid #ddd;
   padding: 20px;
-  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
-  height: 100vh;
 }
 
 .logo {
-  font-weight: bold;
-  margin-bottom: 30px;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
-.nav-btn, #addNewBtn {
-  display: block;
-  margin: 10px 0;
-  padding: 10px;
-  width: 100%;
-  background: none;
-  border: none;
-  text-align: left;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 12px 0;
   cursor: pointer;
-  font-size: 16px;
 }
 
 .status-dots {
-  margin: 20px 0;
+  display: flex;
+  gap: 5px;
 }
 
 .dot {
   width: 10px;
   height: 10px;
-  display: inline-block;
   border-radius: 50%;
-  margin-right: 5px;
 }
 
-.green { background: #9ae6b4; }
-.blue { background: #90cdf4; }
-.red { background: #f87171; }
+.dot.green { background-color: lightgreen; }
+.dot.blue { background-color: lightblue; }
+.dot.red { background-color: lightcoral; }
 
-.main-content {
+.main {
   flex: 1;
   padding: 20px;
+  position: relative;
 }
 
-header {
+.top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-header input {
-  padding: 8px;
-  border-radius: 4px;
+.search-container input {
+  padding: 6px 10px;
+  border-radius: 5px;
   border: 1px solid #ccc;
-  width: 200px;
+}
+
+.account-container {
+  position: relative;
+  cursor: pointer;
 }
 
 .account-icon {
-  cursor: pointer;
-  font-size: 20px;
-  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 
 .account-menu {
-  position: absolute;
-  right: 20px;
-  top: 50px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  border-radius: 5px;
-  padding: 10px;
-  z-index: 10;
-}
-
-.hidden {
   display: none;
-}
-
-.note-form {
-  margin-top: 20px;
-}
-
-.note-form input,
-.note-form textarea {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   padding: 10px;
+  z-index: 100;
 }
 
-.note-form button {
-  padding: 10px 20px;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  cursor: pointer;
+.account-menu button {
+  display: block;
+  margin: 5px 0;
+  width: 100%;
 }
 
-.card-container {
+.add-new-form {
+  display: none;
+  margin: 20px 0;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.add-new-form input,
+.add-new-form textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.folder-container, .note-container {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
@@ -116,27 +118,21 @@ header input {
 }
 
 .note-card, .folder-card {
-  padding: 15px;
+  background: #fff;
+  padding: 10px;
   border-radius: 10px;
-  width: 180px;
-  min-height: 100px;
-  color: #333;
-  position: relative;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.folder-card {
-  font-weight: bold;
+  width: 200px;
+  min-height: 120px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .note-card .actions {
-  position: absolute;
-  top: 5px;
-  right: 5px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
-.default-message {
-  font-style: italic;
+.empty-message {
   color: #888;
-  margin: 20px 0;
+  font-style: italic;
 }
