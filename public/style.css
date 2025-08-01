@@ -1,9 +1,6 @@
-body {
-  margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f6f8;
-}
-
+/* Reset & layout */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", sans-serif; background: #f4f6f8; }
 .container {
   display: grid;
   grid-template-areas:
@@ -13,132 +10,66 @@ body {
   grid-template-rows: auto 1fr;
   height: 100vh;
 }
-
 header {
-  grid-area: header;
-  background-color: #2f80ed;
-  color: white;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  grid-area: header; background: #2f80ed; color: white;
+  padding: 1rem; display: flex; justify-content: space-between; align-items: center;
 }
-
-header h1 {
-  margin: 0;
-}
-
 #logoutBtn {
-  background: white;
-  border: none;
-  color: #2f80ed;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
+  background: white; border: none; color: #2f80ed;
+  padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: bold;
 }
-
 .sidebar {
-  grid-area: sidebar;
-  background: #e3eaf1;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  grid-area: sidebar; background: #e3eaf1; padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
 }
-
 .nav-btn {
-  background: #ffffff;
-  border: 1px solid #ccc;
-  padding: 0.6rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
+  background: white; border: 1px solid #ccc; padding: 0.6rem;
+  border-radius: 5px; cursor: pointer; font-weight: bold;
 }
-
 main {
-  grid-area: main;
-  padding: 1.5rem;
-  overflow-y: auto;
+  grid-area: main; padding: 1.5rem; overflow-y: auto;
 }
-
 #noteForm {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
 }
-
-#noteForm input,
-#noteForm textarea,
-#noteForm button {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
+#noteForm input, #noteForm textarea, #noteForm button {
+  padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;
 }
+#noteForm textarea { resize: vertical; flex-grow: 1; min-height: 40px; }
+#noteForm button { background: #2f80ed; color: white; border: none; cursor: pointer; }
 
-#noteForm textarea {
-  resize: vertical;
-  flex-grow: 1;
-  min-height: 40px;
+#notes-container {
+  display: flex; flex-wrap: wrap; gap: 1rem;
 }
-
-#noteForm button {
-  background-color: #2f80ed;
-  color: white;
-  border: none;
-  cursor: pointer;
+.card {
+  background: white; padding: 1rem; border-radius: 6px;
+  border: 1px solid #ccc; width: 250px; position: relative;
 }
+.card-title { font-weight: bold; margin-bottom: 0.5rem; }
+.card-menu { position: absolute; top: 8px; right: 8px; cursor: pointer; }
 
-#notesSection {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+.hidden { display: none; }
+
+#calendarSection { margin-top: 1rem; }
+#calendar-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;
 }
-
-.note-card {
-  background: white;
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 250px;
-  position: relative;
-}
-
-.note-title {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.note-actions {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-.hidden {
-  display: none;
-}
-
-#calendarSection {
-  background: white;
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 6px;
-  margin-top: 2rem;
-}
-
-#calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
 .calendar-day {
-  background: #f0f0f0;
-  padding: 1rem;
-  border-radius: 4px;
-  text-align: center;
+  background: #f0f0f0; padding: 1rem; border-radius: 4px;
+  text-align: center; position: relative;
 }
+.reminder-dot {
+  width: 8px; height: 8px; background: #f87171; border-radius: 50%;
+  position: absolute; bottom: 5px; right: 5px;
+}
+
+/* Minimal menu style */
+.context-menu {
+  position: absolute; background: white; border: 1px solid #aaa;
+  border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex; flex-direction: column; z-index: 1000;
+}
+.context-menu button {
+  padding: 6px 10px; background: none; border: none; cursor: pointer; text-align: left;
+}
+.context-menu button:hover { background: #eee; }
