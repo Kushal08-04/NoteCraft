@@ -1,185 +1,164 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f9fafb;
+  font-family: Arial, sans-serif;
+  background-color: #f6f7f9;
 }
 
 .app {
   display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.sidebar {
-  width: 220px;
-  background: #e0f2ff;
-  padding: 20px 10px;
+header {
+  background-color: #dbeafe;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  padding: 10px;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
 }
 
 .logo {
   font-weight: bold;
-  font-size: 18px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
 }
 
-.sidebar-btn {
-  background: #dbeafe;
-  border: none;
-  padding: 10px;
-  text-align: left;
-  border-radius: 8px;
+header input {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#account-icon {
+  margin-left: 10px;
   cursor: pointer;
 }
 
-.sidebar-btn:hover {
-  background: #c7d2fe;
-}
-
-.status-circles {
+#account-menu {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
   display: flex;
-  gap: 5px;
-  padding: 0 10px;
+  flex-direction: column;
+  z-index: 10;
 }
 
-.circle {
-  width: 10px;
+#account-menu button {
+  padding: 5px 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+#account-menu.hidden {
+  display: none;
+}
+
+aside {
+  width: 200px;
+  background-color: #e0f2fe;
+  padding: 10px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #e0f2fe;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.nav-btn.active {
+  background-color: #bae6fd;
+}
+
+.status-dots {
+  display: flex;
+  justify-content: start;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.dot {
   height: 10px;
+  width: 10px;
   border-radius: 50%;
+  display: inline-block;
 }
 
 .green { background: lightgreen; }
 .blue { background: lightblue; }
 .red { background: lightcoral; }
 
-.main-content {
+main {
   flex-grow: 1;
-  padding: 0;
-}
-
-.header {
-  background: #dbeafe;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 30px;
-  position: relative;
-}
-
-.header-left .title {
-  margin: 0;
-  font-size: 24px;
-}
-
-.header-center {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.search-bar {
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid #aaa;
-  width: 300px;
-}
-
-.header-right {
-  position: relative;
-}
-
-.account-icon {
-  cursor: pointer;
-}
-
-.account-menu {
-  position: absolute;
-  top: 30px;
-  right: 0;
-  background: white;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-  padding: 10px;
-  display: none;
-  flex-direction: column;
-}
-
-.account-menu button {
-  background: none;
-  border: none;
-  padding: 5px 10px;
-  text-align: left;
-  cursor: pointer;
-}
-
-.account-menu button:hover {
-  background: #f0f0f0;
-}
-
-.add-new-form {
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  overflow-y: auto;
 }
 
-.hidden {
-  display: none;
-}
-
-.folders, .notes {
+#folders-container, #notes-container, #archive-container, #trash-container {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
-  padding: 20px;
+  gap: 10px;
 }
 
 .folder-card, .note-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 15px;
-  width: 180px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+  width: 200px;
   position: relative;
 }
 
-.card-options {
+.folder-card .dots, .note-card .dots {
   position: absolute;
   top: 5px;
-  right: 5px;
+  right: 10px;
   cursor: pointer;
 }
 
-.options-menu {
+.menu {
   position: absolute;
   top: 25px;
-  right: 0;
-  background: white;
+  right: 10px;
+  background: #fff;
   border: 1px solid #ccc;
-  border-radius: 6px;
   display: none;
-  z-index: 10;
+  flex-direction: column;
+  z-index: 5;
 }
 
-.options-menu button {
-  display: block;
-  width: 100%;
-  padding: 6px 12px;
+.menu button {
   border: none;
-  background: white;
+  background: none;
+  padding: 5px 10px;
   cursor: pointer;
-  text-align: left;
 }
 
-.options-menu button:hover {
-  background: #f2f2f2;
+#calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
 }
 
-/* Calendar */
-.calendar-section {
-  padding: 20px;
+.calendar-day {
+  background: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #ddd;
 }
 
 .calendar-header {
@@ -188,27 +167,10 @@ body {
   align-items: center;
 }
 
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  margin-top: 10px;
-  gap: 5px;
+#reminder-box {
+  margin-top: 20px;
 }
 
-.calendar-day {
-  border: 1px solid #ccc;
-  padding: 10px;
-  min-height: 60px;
-  border-radius: 4px;
-  position: relative;
-}
-
-.calendar-day.other-month {
-  background: #f0f0f0;
-  color: #888;
-}
-
-.calendar-day:hover {
-  background: #e0f7ff;
-  cursor: pointer;
+.hidden {
+  display: none;
 }
