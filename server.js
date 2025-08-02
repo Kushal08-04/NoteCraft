@@ -6,26 +6,36 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const passport = require('passport');
-const { WebAppStrategy } = require('ibmcloud-appid');
+const appID = require('ibmcloud-appid');
+const WebAppStrategy = appID.WebAppStrategy;
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// === Session Configuration ===
 app.use(session({
-  secret: 'note-craft-secret-key', // Use a strong secret in production
+  secret: 'note-craft-secret-key', // 🔐 Change this to a strong secret in production
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Use true in HTTPS
+  cookie: { secure: false } // set to true only if you're using HTTPS
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// === IBM App ID Passport Strategy ===
+// === IBM App ID Auth ===
+app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
+// IBM App ID callback route
+app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+  failureRedirect: '/login-failed.html'
+}), (req, res) => {
+  res.redirect('/');
+});
+
 passport.use(new WebAppStrategy({
   clientId: process.env.CLIENT_ID,
   secret: process.env.CLIENT_SECRET,
@@ -33,101 +43,115 @@ passport.use(new WebAppStrategy({
   oauthServerUrl: process.env.OAUTH_SERVER_URL,
   redirectUri: process.env.REDIRECT_URI
 }));
+const authenticate = passport.authenticate(WebAppStrategy.STRATEGY_NAME, { session: false });
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
 
-// === Auth Middleware ===
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) return next();
-  res.status(401).json({ error: 'Unauthorized' });
-}
-
-// === Auth Routes ===
-app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
-
-app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
-  failureRedirect: '/login-failed.html'
-}), (req, res) => {
-  res.redirect('/');
-});
-
-app.get('/logout', (req, res) => {
-  req.logout(() => {
-    res.redirect('/logged-out.html');
-  });
-});
-
-// === Notes APIs ===
-const notesPath = path.join(__dirname, 'notes.json');
-
-app.get('/api/notes', ensureAuthenticated, (req, res) => {
-  const allNotes = fs.existsSync(notesPath) ? JSON.parse(fs.readFileSync(notesPath)) : {};
-  const userNotes = allNotes[req.user.email] || [];
-  const nonReminderNotes = userNotes.filter(note => !note.date);
+// ========== Notes APIs ==========
+app.get('/api/notes', authenticate, (req, res) => {
+  const userEmail = req.user.email;
+  const notesPath = path.join(__dirname, 'notes.json');
+  if (!fs.existsSync(notesPath)) {
+    fs.writeFileSync(notesPath, '{}');
+  }
+  const allNotes = JSON.parse(fs.readFileSync(notesPath));
+  const userNotes = allNotes[userEmail] || [];
+  const nonReminderNotes = userNotes.filter(note => !note.date); // exclude notes with a "date"
   res.json(nonReminderNotes);
 });
 
-app.post('/api/notes', ensureAuthenticated, (req, res) => {
+app.post('/api/notes', authenticate, (req, res) => {
+  const userEmail = req.user.email;
   const newNote = req.body;
-  const allNotes = fs.existsSync(notesPath) ? JSON.parse(fs.readFileSync(notesPath)) : {};
+  const notesPath = path.join(__dirname, 'notes.json');
+  let allNotes = {};
 
-  allNotes[req.user.email] = allNotes[req.user.email] || [];
-  allNotes[req.user.email].push(newNote);
+  if (fs.existsSync(notesPath)) {
+    allNotes = JSON.parse(fs.readFileSync(notesPath));
+  }
 
+  if (!allNotes[userEmail]) {
+    allNotes[userEmail] = [];
+  }
+
+  allNotes[userEmail].push(newNote);
   fs.writeFileSync(notesPath, JSON.stringify(allNotes, null, 2));
+  console.log("New note saved:", note);
   res.status(201).json({ message: 'Note saved successfully' });
 });
 
-app.put('/api/notes/:id', ensureAuthenticated, (req, res) => {
+// ========== Update Note (Archive, Delete, Restore, etc.) ==========
+app.put('/api/notes/:id', authenticate, (req, res) => {
+  const userEmail = req.user.email;
   const noteId = req.params.id;
-  const updates = req.body;
-  const allNotes = fs.existsSync(notesPath) ? JSON.parse(fs.readFileSync(notesPath)) : {};
-  let userNotes = allNotes[req.user.email] || [];
+  const updatedFields = req.body;
 
-  const index = userNotes.findIndex(note => note.id === noteId);
+  const notesPath = path.join(__dirname, 'notes.json');
+  let allNotes = JSON.parse(fs.readFileSync(notesPath));
+  let userNotes = allNotes[userEmail] || [];
+
+  let index = userNotes.findIndex(note => note.id === noteId);
   if (index === -1) return res.status(404).json({ message: 'Note not found' });
 
-  userNotes[index] = { ...userNotes[index], ...updates };
-  allNotes[req.user.email] = userNotes;
+  userNotes[index] = { ...userNotes[index], ...updatedFields };
+  allNotes[userEmail] = userNotes;
   fs.writeFileSync(notesPath, JSON.stringify(allNotes, null, 2));
 
   res.json({ message: 'Note updated successfully' });
 });
 
-app.delete('/api/notes/:id', ensureAuthenticated, (req, res) => {
+// ========== Permanently Delete Note ==========
+app.delete('/api/notes/:id', authenticate, (req, res) => {
+  const userEmail = req.user.email;
   const noteId = req.params.id;
-  const allNotes = fs.existsSync(notesPath) ? JSON.parse(fs.readFileSync(notesPath)) : {};
-  let userNotes = allNotes[req.user.email] || [];
 
-  userNotes = userNotes.filter(note => note.id !== noteId);
-  allNotes[req.user.email] = userNotes;
+  const notesPath = path.join(__dirname, 'notes.json');
+  let allNotes = JSON.parse(fs.readFileSync(notesPath));
+  let userNotes = allNotes[userEmail] || [];
+
+  const newNotes = userNotes.filter(note => note.id !== noteId);
+  allNotes[userEmail] = newNotes;
   fs.writeFileSync(notesPath, JSON.stringify(allNotes, null, 2));
 
   res.json({ message: 'Note permanently deleted' });
 });
 
-// === Reminders APIs ===
-const remindersPath = path.join(__dirname, 'reminders.json');
 
-app.get('/api/reminders', ensureAuthenticated, (req, res) => {
-  const allReminders = fs.existsSync(remindersPath) ? JSON.parse(fs.readFileSync(remindersPath)) : {};
-  const userReminders = allReminders[req.user.email] || [];
+// ========== Reminders APIs ==========
+app.get('/api/reminders', authenticate, (req, res) => {
+  const userEmail = req.user.email;
+  const pathRem = path.join(__dirname, 'reminders.json');
+  if (!fs.existsSync(pathRem)) {
+    fs.writeFileSync(pathRem, '{}'); // create an empty object for storing reminders per user
+  }
+  const allReminders = JSON.parse(fs.readFileSync(pathRem));
+  const userReminders = allReminders[userEmail] || [];
   res.json(userReminders);
 });
 
-app.post('/api/reminders', ensureAuthenticated, (req, res) => {
+app.post('/api/reminders', authenticate, (req, res) => {
+  const userEmail = req.user.email;
   const newReminder = req.body;
-  const allReminders = fs.existsSync(remindersPath) ? JSON.parse(fs.readFileSync(remindersPath)) : {};
+  const pathRem = path.join(__dirname, 'reminders.json');
+  let allReminders = {};
 
-  allReminders[req.user.email] = allReminders[req.user.email] || [];
-  allReminders[req.user.email].push(newReminder);
+  if (fs.existsSync(pathRem)) {
+    allReminders = JSON.parse(fs.readFileSync(pathRem));
+  }
 
-  fs.writeFileSync(remindersPath, JSON.stringify(allReminders, null, 2));
+  if (!allReminders[userEmail]) {
+    allReminders[userEmail] = [];
+  }
+
+  allReminders[userEmail].push(newReminder);
+  fs.writeFileSync(pathRem, JSON.stringify(allReminders, null, 2));
   res.status(201).json({ message: 'Reminder saved successfully' });
 });
 
-// === Start Server ===
+// ========== Start Server ==========
 app.listen(port, () => {
-  console.log(`✅ Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
+app.get('/logout', (req, res) => {
+  res.redirect('/logged-out.html'); // Create this file in your public/ folder
+});
+
