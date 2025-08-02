@@ -53,36 +53,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log("🔁 All Reminders:", reminders);
   function renderCalendar() {
     const grid = document.getElementById('calendar-grid');
-    if (!grid) return;
     grid.innerHTML = '';
-    const today = new Date(), y = today.getFullYear(), m = today.getMonth();
-    const days = new Date(y, m + 1, 0).getDate();
-    const firstDay = new Date(y, m, 1).getDay(); // Sunday = 0
-    
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement('div');
-      empty.className = 'calendar-day';
-      grid.appendChild(empty);
-    }
-
-
+    const d = new Date(), y = d.getFullYear(), m = d.getMonth(),
+          days = new Date(y, m+1, 0).getDate();
     for (let i = 1; i <= days; i++) {
       const cell = document.createElement('div');
       cell.className = 'calendar-day';
-      const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
       cell.textContent = i;
-
-      const hasReminder = reminders.some(r => r.date === dateStr);
-      if (hasReminder) {
+      const str = `${y}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+      if (reminders.some(r => r.date === str)) {
         const dot = document.createElement('div');
         dot.className = 'reminder-dot';
         cell.appendChild(dot);
-
-        cell.addEventListener('click', () => {
-          showReminderList(dateStr);
-        });
       }
-
       grid.appendChild(cell);
     }
   }
@@ -230,28 +213,14 @@ async function getUserInfo() {
 }
 
 async function addReminder(date, text) {
-  const reminder = {
-  id: Date.now().toString(),
-  date,
-  title: "Reminder",
-  content: text,
-  email: userEmail
-};
-
-  reminders.push(reminder); // store locally
-  console.log('📅 Saving reminder:', reminder);
-
-  try {
+    const r = { id: Date.now().toString(), date, text, email: userEmail };
+    reminders.push(r);
     await fetch('/api/reminders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reminder)
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(r)
     });
-    renderCalendar(); // update calendar after saving
-  } catch (err) {
-    console.error('❌ Failed to save reminder:', err);
+    renderCalendar();
   }
-}
+
 
 async function addNote(title, content, date = "") {
   const note = {
@@ -356,11 +325,14 @@ window.onload = async function initApp() {
 });
 
 document.getElementById('calendarBtn').addEventListener('click', () => {
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById('calendarBtn').classList.add('active');
-  calendarSection.classList.remove('hidden');
-  notesContainer.style.display = 'none';
-});
+    renderCalendar();
+    document.getElementById('calendarSection').classList.remove('hidden');
+    document.getElementById('notes-container').style.display = 'none';
+  });
+
+  await getUser();
+  await loadData();
+
 
 });
 
