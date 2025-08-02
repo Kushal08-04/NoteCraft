@@ -11,11 +11,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function loadData() {
-    notes = await (await fetch('/api/notes')).json();
-    reminders = await (await fetch('/api/reminders')).json();
-    renderNotes('active');
-    renderCalendar();
+    try {
+      notes = await (await fetch('/api/notes')).json();
+      console.log('📥 Loaded notes:', notes); // ✅ ADD THIS
+
+      reminders = await (await fetch('/api/reminders')).json();
+      renderNotes('active');
+      renderCalendar();
+    } catch (err) {
+      console.error('❌ Failed to load notes or reminders:', err);
+    
   }
+
 
   function renderNotes(status = 'active') {
     if (!notesContainer) return;
@@ -24,6 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     notesContainer.innerHTML = '';
 
     const filtered = notes.filter(n => n.status === status && (!n.date || status !== 'active'));
+    console.log(`🧾 Rendering ${filtered.length} notes with status: ${status}`);
+
     if (filtered.length === 0) {
       notesContainer.innerHTML = '<p class="empty-msg">No notes to display.</p>';
       return;
@@ -161,23 +170,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function addNote(title, content) {
-    const note = {
-      id: Date.now().toString(),
-      title,
-      content,
-      date: new Date().toLocaleDateString(),
-      color: ['yellow', 'red', 'blue', 'purple'][Math.floor(Math.random() * 4)],
-      status: 'active',
-      email: userEmail
-    };
-    notes.push(note);
-    await fetch('/api/notes', {
+  const note = {
+    id: Date.now().toString(),
+    title,
+    content,
+    date: '', // no reminder unless explicitly set
+    color: ['yellow', 'red', 'blue', 'purple'][Math.floor(Math.random() * 4)],
+    status: 'active',
+    email: userEmail
+  };
+  notes.push(note);
+
+  try {
+    const res = await fetch('/api/notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(note)
     });
-    renderNotes('active');
+
+    const data = await res.json();
+    console.log('✅ Note saved:', data); // ✅ ADD THIS
+
+    renderNotes('active'); // refresh UI
+  } catch (err) {
+    console.error('❌ Failed to save note:', err);
   }
+}
+
 
   document.getElementById('noteForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -204,27 +223,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   document.getElementById('archiveBtn').addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('allNotesBtn').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('archiveBtn').classList.add('active'); // ✅ correct
+  renderNotes('archived');
+});
 
-    renderNotes('archived');
-  });
 
 
   document.getElementById('trashBtn').addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('allNotesBtn').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('trashBtn').classList.add('active');
+  renderNotes('deleted');
+});
 
-    renderNotes('deleted');
-  });
+document.getElementById('calendarBtn').addEventListener('click', () => {
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('calendarBtn').classList.add('active');
+  calendarSection.classList.remove('hidden');
+  notesContainer.style.display = 'none';
+});
 
-  document.getElementById('calendarBtn').addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('allNotesBtn').classList.add('active');
-
-    calendarSection.classList.remove('hidden');
-    notesContainer.style.display = 'none';
-  });
 
   await getUser();
   await loadData();
