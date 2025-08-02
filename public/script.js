@@ -56,6 +56,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     grid.innerHTML = '';
     const today = new Date(), y = today.getFullYear(), m = today.getMonth();
     const days = new Date(y, m + 1, 0).getDate();
+    const firstDay = new Date(y, m, 1).getDay(); // Sunday = 0
+    
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'calendar-day';
+      grid.appendChild(empty);
+    }
+
 
     for (let i = 1; i <= days; i++) {
       const cell = document.createElement('div');
@@ -80,6 +88,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function showReminderList(date) {
     const list = reminders.filter(r => r.date === date && r.email === userEmail);
+    const notesContainer = document.getElementById('notes-container');
+    const calendarSection = document.getElementById('calendarSection');
     notesContainer.innerHTML = '';
     notesContainer.style.display = 'flex';
     calendarSection.classList.remove('hidden');
@@ -92,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     list.forEach(r => {
       const div = document.createElement('div');
       div.className = 'card yellow';
-      div.innerHTML = `<div class="card-title">Reminder</div><p>${r.text}</p><small>${r.date}</small>`;
+      div.innerHTML = `<div class="card-title">${r.title}</div><p>${r.content}</p><small>${r.date}</small>`;
       notesContainer.appendChild(div);
     });
   }
@@ -209,90 +219,6 @@ window.permanentlyDeleteNote = async (id) => {
   renderNotes('deleted');
 };
 
-
-
- /* async function archiveNote(id) {
-    const note = notes.find(n => n.id === id);
-    if (!note) return;
-    note.status = 'archived';
-    await fetch(`/api/notes/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(note)
-    });
-    renderNotes('active');
-  }
-
-  async function deleteNote(id) {
-    const note = notes.find(n => n.id === id);
-    if (!note) return;
-    note.status = 'deleted';
-    await fetch(`/api/notes/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(note)
-    });
-    renderNotes('active');
-  }*/
-
-  /*async function addReminder(date, text) {
-    const reminder = {
-      id: Date.now().toString(),
-      date,
-      text,
-      email: userEmail
-    };
-    reminders.push(reminder);
-    console.log('Saving reminder:',reminder);
-    await fetch('/api/reminders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reminder)
-    });
-    renderCalendar();
-  }
-
-  async function addNote(title, content, date="") {
-  const note = {
-    id: Date.now().toString(),
-    title,
-    content,
-    date,
-    color: ['yellow', 'red', 'blue', 'purple'][Math.floor(Math.random() * 4)],
-    status: 'active',
-    email: userEmail
-  };
-  notes.push(note);
-
-  try {
-    const res = await fetch('/api/notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(note)
-    });
-
-    const data = await res.json();
-    console.log('✅ Note saved:', data); // ✅ ADD THIS
-
-    renderNotes('active'); // refresh UI
-  } catch (err) {
-    console.error('❌ Failed to save note:', err);
-  }
-}
-
-
-  document.getElementById('noteForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const title = document.getElementById('noteTitle').value.trim();
-    const content = document.getElementById('noteContent').value.trim();
-    const date = document.getElementById('reminderDate').value;
-    if (title && content) {
-      await addNote(title, content, date);
-      if (date) await addReminder(date, `${title} - ${content}`);
-      e.target.reset();
-    }
-  });*/
-
 // Fetch current user info on load
 async function getUserInfo() {
   try {
@@ -383,6 +309,7 @@ async function loadNotes() {
 async function loadReminders() {
   try {
     const res = await fetch('/api/reminders');
+    if (!res.ok) throw new Error('Failed to load reminders');
     reminders = await res.json();
     console.log("📅 Loaded reminders:", reminders);
     renderCalendar(); // update calendar view
@@ -390,8 +317,6 @@ async function loadReminders() {
     console.error("❌ Failed to load reminders:", err);
   }
 }
-
-
 // 🔁 Initialize everything on page load
 window.onload = async function initApp() {
   await getUserInfo();  // fetch user email
