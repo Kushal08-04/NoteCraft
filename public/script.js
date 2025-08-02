@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('❌ Failed to load notes or reminders:', err);
     
   }
-
+  }
 
   function renderNotes(status = 'active') {
     if (!notesContainer) return;
@@ -129,6 +129,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
+    window.archiveNote = async (id) => {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    note.status = 'archived';
+    await fetch(`/api/notes/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(note)
+    });
+    renderNotes('active');
+  };
+
+  window.deleteNote = async (id) => {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    note.status = 'deleted';
+    await fetch(`/api/notes/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(note)
+    });
+    renderNotes('active');
+  };
+
+
   async function archiveNote(id) {
     const note = notes.find(n => n.id === id);
     if (!note) return;
@@ -161,6 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       email: userEmail
     };
     reminders.push(reminder);
+    console.log('Saving reminder:',reminder);
     await fetch('/api/reminders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -247,3 +273,9 @@ document.getElementById('calendarBtn').addEventListener('click', () => {
   await getUser();
   await loadData();
 });
+function initApp() {
+  loadNotes();
+  loadReminders(); // ✅ shows reminders on calendar
+}
+
+window.onload = initApp;
