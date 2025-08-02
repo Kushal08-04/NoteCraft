@@ -1,41 +1,23 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const fs = require('fs');
 const path = require('path');
+const session = require('express-session');
 const passport = require('passport');
-const appID = require('ibmcloud-appid');
-const WebAppStrategy = appID.WebAppStrategy;
+const { WebAppStrategy } = require('ibmcloud-appid');
+const fs = require('fs');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
+// Session setup
 app.use(session({
-  secret: 'note-craft-secret-key', // 🔐 Change this to a strong secret in production
+  secret: 'noter_app_secret',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // set to true only if you're using HTTPS
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// === IBM App ID Auth ===
-app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
-// IBM App ID callback route
-app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
-  failureRedirect: '/login-failed.html'
-}), (req, res) => {
-  res.redirect('/');
-});
-
+// Passport setup
 passport.use(new WebAppStrategy({
   clientId: process.env.CLIENT_ID,
   secret: process.env.CLIENT_SECRET,
@@ -43,7 +25,36 @@ passport.use(new WebAppStrategy({
   oauthServerUrl: process.env.OAUTH_SERVER_URL,
   redirectUri: process.env.REDIRECT_URI
 }));
-const authenticate = passport.authenticate(WebAppStrategy.STRATEGY_NAME, { session: false });
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Authentication routes
+app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
+app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+  failureRedirect: '/login-failed.html',
+  successRedirect: '/'
+}));
+app.get('/logout', (req, res) => {
+  req.logout(() => res.redirect('/logged-out.html'));
+});
+app.get('/profile', (req, res) => {
+  if (req.isAuthenticated()) res.json(req.user);
+  else res.status(401).json({ error: 'Not authenticated' });
+});
+
+// ✅ Custom middleware for protected routes
+function authenticate(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.status(401).send('Unauthorized');
+}
 
 
 // ========== Notes APIs ==========
