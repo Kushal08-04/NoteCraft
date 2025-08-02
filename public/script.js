@@ -66,6 +66,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         dot.className = 'reminder-dot';
         cell.appendChild(dot);
       }
+      cell.addEventListener('click', () => {
+        console.log("📅 Clicked on date:", str); // Optional debug log
+        showReminderList(str);
+      });
+
       grid.appendChild(cell);
     }
   }
@@ -84,9 +89,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     list.forEach(r => {
       const div = document.createElement('div');
       div.className = 'card yellow';
-      div.innerHTML = `<div class="card-title">Reminder</div><p>${r.text}</p><small>${r.date}</small>`;
+      div.innerHTML = `
+        <div class="card-title">Reminder</div>
+        <p>${r.text}</p>
+        <small>${r.date}</small>
+      `;
       notesContainer.appendChild(div);
     });
+
   }
 
   window.showMenu = (e, id) => {
