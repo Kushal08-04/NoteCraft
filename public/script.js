@@ -369,6 +369,29 @@ document.getElementById('noteForm').addEventListener('submit', async (e) => {
   }
 });
 
+async function loadNotes() {
+  try {
+    const res = await fetch('/api/notes');
+    notes = await res.json();
+    console.log("📥 Loaded notes:", notes);
+    renderNotes('active');
+  } catch (err) {
+    console.error("❌ Failed to load notes:", err);
+  }
+}
+
+async function loadReminders() {
+  try {
+    const res = await fetch('/api/reminders');
+    reminders = await res.json();
+    console.log("📅 Loaded reminders:", reminders);
+    renderCalendar(); // update calendar view
+  } catch (err) {
+    console.error("❌ Failed to load reminders:", err);
+  }
+}
+
+
 // 🔁 Initialize everything on page load
 window.onload = async function initApp() {
   await getUserInfo();  // fetch user email
@@ -410,8 +433,5 @@ document.getElementById('calendarBtn').addEventListener('click', () => {
   notesContainer.style.display = 'none';
 });
 
-
-  await getUser();
-  await loadData();
 });
 
