@@ -1,4 +1,4 @@
-require('dotenv').config();
+/*require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -45,6 +45,66 @@ passport.use(new WebAppStrategy({
   redirectUri: process.env.REDIRECT_URI
 }));
 const authenticate = passport.authenticate(WebAppStrategy.STRATEGY_NAME, { session: false });
+*/
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const session = require('express-session');
+const passport = require('passport');
+const { WebAppStrategy } = require('ibmcloud-appid');
+const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Session setup
+app.use(session({
+  secret: 'noter_app_secret',
+  resave: false,
+  saveUninitialized: true,
+}));
+
+// Passport setup
+passport.use(new WebAppStrategy({
+  clientId: process.env.CLIENT_ID,
+  secret: process.env.CLIENT_SECRET,
+  tenantId: process.env.TENANT_ID,
+  oauthServerUrl: process.env.OAUTH_SERVER_URL,
+  redirectUri: process.env.REDIRECT_URI
+}));
+
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Authentication routes
+app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
+app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+  failureRedirect: '/login',
+  successRedirect: '/'
+}));
+app.get('/logout', (req, res) => {
+  req.logout(() => res.redirect('/'));
+});
+app.get('/profile', (req, res) => {
+  if (req.isAuthenticated()) res.json(req.user);
+  else res.status(401).json({ error: 'Not authenticated' });
+});
+
+// Protect these routes
+app.use((req, res, next) => {
+  if (req.isAuthenticated()) return next();
+  res.status(401).send('Unauthorized');
+});
 
 // ========== Notes APIs ==========
 app.get('/api/notes', authenticate, (req, res) => {
