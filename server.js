@@ -30,6 +30,13 @@ app.use(passport.initialize());
 
 // === IBM App ID Auth ===
 
+// IBM App ID callback route
+app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+  failureRedirect: '/login-failed.html'
+}), (req, res) => {
+  res.redirect('/');
+});
+
 passport.use(new WebAppStrategy({
   clientId: process.env.CLIENT_ID,
   secret: process.env.CLIENT_SECRET,
