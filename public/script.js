@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  console.log("🔁 All Reminders:", reminders);
   function renderCalendar() {
     const grid = document.getElementById('calendar-grid');
     if (!grid) return;
@@ -88,8 +89,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function showReminderList(date) {
     const list = reminders.filter(r => r.date === date && r.email === userEmail);
-    const notesContainer = document.getElementById('notes-container');
-    const calendarSection = document.getElementById('calendarSection');
     notesContainer.innerHTML = '';
     notesContainer.style.display = 'flex';
     calendarSection.classList.remove('hidden');
@@ -102,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     list.forEach(r => {
       const div = document.createElement('div');
       div.className = 'card yellow';
-      div.innerHTML = `<div class="card-title">${r.title}</div><p>${r.content}</p><small>${r.date}</small>`;
+      div.innerHTML = `<div class="card-title">Reminder</div><p>${r.text}</p><small>${r.date}</small>`;
       notesContainer.appendChild(div);
     });
   }
@@ -232,11 +231,13 @@ async function getUserInfo() {
 
 async function addReminder(date, text) {
   const reminder = {
-    id: Date.now().toString(),
-    date,
-    text,
-    email: userEmail
-  };
+  id: Date.now().toString(),
+  date,
+  title: "Reminder",
+  content: text,
+  email: userEmail
+};
+
   reminders.push(reminder); // store locally
   console.log('📅 Saving reminder:', reminder);
 
@@ -310,7 +311,10 @@ async function loadReminders() {
   try {
     const res = await fetch('/api/reminders');
     if (!res.ok) throw new Error('Failed to load reminders');
-    reminders = await res.json();
+    reminders.length = 0; // Clear existing array
+    reminders.push(...await res.json()); // Push data into same reference
+
+    //reminders = await res.json();
     console.log("📅 Loaded reminders:", reminders);
     renderCalendar(); // update calendar view
   } catch (err) {
