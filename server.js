@@ -30,11 +30,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // === IBM App ID Auth ===
 app.get('/login', passport.authenticate(WebAppStrategy.STRATEGY_NAME));
 // IBM App ID callback route
-app.get('/callback', passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
-  failureRedirect: '/login-failed.html'
-}), (req, res) => {
-  res.redirect('/');
-});
+app.get('/callback',
+  passport.authenticate(WebAppStrategy.STRATEGY_NAME, {
+    failureRedirect: '/login-failed.html',
+  }),
+  (req, res) => {
+    console.log("✅ User successfully authenticated:", req.user);
+    res.redirect('/');
+  }
+);
+
 
 passport.use(new WebAppStrategy({
   clientId: process.env.CLIENT_ID,
