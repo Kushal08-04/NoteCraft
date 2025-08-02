@@ -235,7 +235,7 @@ window.permanentlyDeleteNote = async (id) => {
     renderNotes('active');
   }*/
 
-  async function addReminder(date, text) {
+  /*async function addReminder(date, text) {
     const reminder = {
       id: Date.now().toString(),
       date,
@@ -252,7 +252,7 @@ window.permanentlyDeleteNote = async (id) => {
     renderCalendar();
   }
 
-  async function addNote(title, content) {
+  async function addNote(title, content, date="") {
   const note = {
     id: Date.now().toString(),
     title,
@@ -291,7 +291,91 @@ window.permanentlyDeleteNote = async (id) => {
       if (date) await addReminder(date, `${title} - ${content}`);
       e.target.reset();
     }
-  });
+  });*/
+
+// Fetch current user info on load
+async function getUserInfo() {
+  try {
+    const res = await fetch('/api/user');
+    const data = await res.json();
+    userEmail = data.email;
+  } catch (err) {
+    console.error('❌ Failed to fetch user info:', err);
+  }
+}
+
+async function addReminder(date, text) {
+  const reminder = {
+    id: Date.now().toString(),
+    date,
+    text,
+    email: userEmail
+  };
+  reminders.push(reminder); // store locally
+  console.log('📅 Saving reminder:', reminder);
+
+  try {
+    await fetch('/api/reminders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reminder)
+    });
+    renderCalendar(); // update calendar after saving
+  } catch (err) {
+    console.error('❌ Failed to save reminder:', err);
+  }
+}
+
+async function addNote(title, content, date = "") {
+  const note = {
+    id: Date.now().toString(),
+    title,
+    content,
+    date,
+    color: ['yellow', 'red', 'blue', 'purple'][Math.floor(Math.random() * 4)],
+    status: 'active',
+    email: userEmail
+  };
+  notes.push(note); // store locally
+
+  try {
+    const res = await fetch('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(note)
+    });
+
+    const data = await res.json();
+    console.log('✅ Note saved:', data);
+    renderNotes('active');
+  } catch (err) {
+    console.error('❌ Failed to save note:', err);
+  }
+}
+
+// ✅ Listen to form submit and handle both note and optional reminder
+document.getElementById('noteForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('noteTitle').value.trim();
+  const content = document.getElementById('noteContent').value.trim();
+  const date = document.getElementById('reminderDate').value;
+
+  if (title && content) {
+    await addNote(title, content, date);
+    if (date) {
+      await addReminder(date, `${title} - ${content}`);
+    }
+    e.target.reset();
+  }
+});
+
+// 🔁 Initialize everything on page load
+window.onload = async function initApp() {
+  await getUserInfo();  // fetch user email
+  loadNotes();          // load saved notes
+  loadReminders();      // load reminders onto calendar
+};
+
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
     window.location.href = '/logout'; // You may change to '/loggedout.html' if custom
