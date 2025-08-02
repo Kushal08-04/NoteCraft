@@ -98,19 +98,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   window.showMenu = (e, id) => {
-    e.stopPropagation();
-    document.querySelectorAll('.context-menu').forEach(m => m.remove());
-    const menu = document.createElement('div');
-    menu.className = 'context-menu';
-    menu.innerHTML = `
-      <button onclick="editNote('${id}')">Edit</button>
+  e.stopPropagation();
+  document.querySelectorAll('.context-menu').forEach(m => m.remove());
+
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+
+  const menu = document.createElement('div');
+  menu.className = 'context-menu';
+
+  let buttons = `
+    <button onclick="editNote('${id}')">Edit</button>
+  `;
+
+  if (note.status === 'active') {
+    buttons += `
       <button onclick="archiveNote('${id}')">Archive</button>
-      <button onclick="deleteNote('${id}')">Delete</button>`;
-    document.body.appendChild(menu);
-    menu.style.left = e.pageX + 'px';
-    menu.style.top = e.pageY + 'px';
-    document.addEventListener('click', () => menu.remove(), { once: true });
-  };
+      <button onclick="deleteNote('${id}')">Delete</button>
+    `;
+  } else if (note.status === 'archived') {
+    buttons += `
+      <button onclick="unarchiveNote('${id}')">Unarchive</button>
+    `;
+  } else if (note.status === 'deleted') {
+    buttons += `
+      <button onclick="restoreNote('${id}')">Restore</button>
+      <button onclick="permanentlyDeleteNote('${id}')">Permanent Delete</button>
+    `;
+  }
+
+  menu.innerHTML = buttons;
+
+  document.body.appendChild(menu);
+  menu.style.left = e.pageX + 'px';
+  menu.style.top = e.pageY + 'px';
+
+  document.addEventListener('click', () => menu.remove(), { once: true });
+};
+
 
   window.editNote = async (id) => {
     const note = notes.find(n => n.id === id);
@@ -152,9 +177,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     renderNotes('active');
   };
+  window.unarchiveNote = async (id) => {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  note.status = 'active';
+  await fetch(`/api/notes/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(note)
+  });
+  renderNotes('archived');
+};
+
+window.restoreNote = async (id) => {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  note.status = 'active';
+  await fetch(`/api/notes/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(note)
+  });
+  renderNotes('deleted');
+};
+
+window.permanentlyDeleteNote = async (id) => {
+  notes = notes.filter(n => n.id !== id);
+  await fetch(`/api/notes/${id}`, {
+    method: 'DELETE'
+  });
+  renderNotes('deleted');
+};
 
 
-  async function archiveNote(id) {
+
+ /* async function archiveNote(id) {
     const note = notes.find(n => n.id === id);
     if (!note) return;
     note.status = 'archived';
@@ -176,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       body: JSON.stringify(note)
     });
     renderNotes('active');
-  }
+  }*/
 
   async function addReminder(date, text) {
     const reminder = {
@@ -200,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     id: Date.now().toString(),
     title,
     content,
-    date: '', // no reminder unless explicitly set
+    date,
     color: ['yellow', 'red', 'blue', 'purple'][Math.floor(Math.random() * 4)],
     status: 'active',
     email: userEmail
@@ -230,8 +287,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const content = document.getElementById('noteContent').value.trim();
     const date = document.getElementById('reminderDate').value;
     if (title && content) {
-      await addNote(title, content);
-      if (date) await addReminder(date, title);
+      await addNote(title, content, date);
+      if (date) await addReminder(date, `${title} - ${content}`);
       e.target.reset();
     }
   });
@@ -273,9 +330,4 @@ document.getElementById('calendarBtn').addEventListener('click', () => {
   await getUser();
   await loadData();
 });
-function initApp() {
-  loadNotes();
-  loadReminders(); // ✅ shows reminders on calendar
-}
 
-window.onload = initApp;
